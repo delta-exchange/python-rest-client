@@ -1,4 +1,5 @@
 import requests
+import time
 import datetime
 from decimal import Decimal
 
@@ -99,7 +100,8 @@ class DeltaRestClient:
     def get_price_history(self, symbol, duration=5, resolution=1):
         if duration/resolution >= 500:
             raise Exception('Too many Data points')
-       current_timestamp = time.mktime(datetime.datetime.today().timetuple())
+
+        current_timestamp = time.mktime(datetime.datetime.today().timetuple())
         last_timestamp = current_timestamp - duration*60
         query = {
             'symbol': symbol,
