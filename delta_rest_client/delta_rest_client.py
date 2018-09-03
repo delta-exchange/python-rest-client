@@ -1,7 +1,5 @@
 import requests
-import time
 import datetime
-from time import sleep
 from decimal import Decimal
 
 agent = requests.Session()
@@ -101,8 +99,7 @@ class DeltaRestClient:
     def get_price_history(self, symbol, duration=5, resolution=1):
         if duration/resolution >= 500:
             raise Exception('Too many Data points')
-
-        current_timestamp = time.mktime(datetime.datetime.today().timetuple())
+       current_timestamp = time.mktime(datetime.datetime.today().timetuple())
         last_timestamp = current_timestamp - duration*60
         query = {
             'symbol': symbol,
@@ -174,14 +171,34 @@ class DeltaRestClient:
         return response.json()
 
 
-def order_convert_format(price, size, side, product_id):
+def order_convert_format(price, size, side, product_id, post_only=False):
     order = {
         'product_id': product_id,
         'limit_price': str(price),
         'size': size,
         'side': side,
         'order_type': 'limit_order',
-        'post_only': True
+        'post_only': post_only
     }
 
+    return order
+
+
+def round_by_tick_size(price, tick_size, floor_or_ceil=None):
+    remainder = price % tick_size
+    if remainder == 0:
+        return price
+    if floor_or_ceil == None:
+        floor_or_ceil = 'ceil' if (remainder >= tick_size / 2) else 'floor'
+    if floor_or_ceil == 'ceil':
+        return price - remainder + tick_size
+    else:
+        return price - remainder
+
+
+def cancel_order_format(x):
+    order = {
+        'id': x['id'],
+        'product_id': x['product']['id']
+    }
     return order
