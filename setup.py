@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="delta_rest_client",
-    version="0.0.6",
+    version="0.0.7",
     author="Arbaaz",
     author_email="me@arbaaz.io",
     description="Rest Client for Delta Exchange",
