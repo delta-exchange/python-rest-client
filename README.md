@@ -13,7 +13,7 @@ pip install delta-rest-client
 3. Follow the below snippet to trade on testnet:
 
 ```python
-from delta_rest_client import DeltaRestClient, order_convert_format
+from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size
 
 delta_client = DeltaRestClient(
   base_url='https://testnet-api.delta.exchange',
@@ -22,11 +22,11 @@ delta_client = DeltaRestClient(
 )
 product_id = 2
 delta_client.get_product(product_id)
-order = order_convert_format(7078.5, 10, "buy", product_id)
+order = create_order_format(7078.5, 10, "buy", product_id)
 delta_client.create_order(order) # will create order on testnet
 
-order1 = order_convert_format(7078.5, 10, "buy", product_id)
-order2 = order_convert_format(7078.5, 10, "sell", product_id)
+order1 = create_order_format(7078.5, 10, "buy", product_id)
+order2 = create_order_format(7078.5, 10, "sell", product_id)
 orders = [order1, order2]
 delta_client.batch_create(product_id, orders)
 delta_client.get_orders()
