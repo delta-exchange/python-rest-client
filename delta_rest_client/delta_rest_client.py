@@ -173,7 +173,7 @@ class DeltaRestClient:
         return response.json()
 
 
-def order_convert_format(price, size, side, product_id, post_only=False):
+def create_order_format(price, size, side, product_id, post_only=False):
     order = {
         'product_id': product_id,
         'limit_price': str(price),
@@ -183,6 +183,13 @@ def order_convert_format(price, size, side, product_id, post_only=False):
         'post_only': post_only
     }
 
+    return order
+
+def cancel_order_format(x):
+    order = {
+        'id': x['id'],
+        'product_id': x['product']['id']
+    }
     return order
 
 
@@ -197,10 +204,3 @@ def round_by_tick_size(price, tick_size, floor_or_ceil=None):
     else:
         return price - remainder
 
-
-def cancel_order_format(x):
-    order = {
-        'id': x['id'],
-        'product_id': x['product']['id']
-    }
-    return order
