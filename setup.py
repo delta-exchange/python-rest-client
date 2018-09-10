@@ -1,11 +1,12 @@
 import setuptools
+from delta_rest_client import __version__ as version
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="delta_rest_client",
-    version="0.0.8",
+    version=version,
     author="Arbaaz",
     author_email="me@arbaaz.io",
     description="Rest Client for Delta Exchange",

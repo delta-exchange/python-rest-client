@@ -2,18 +2,22 @@ import requests
 import time
 import datetime
 from decimal import Decimal
+from .version import __version__ as version
 
 agent = requests.Session()
 
 
 class DeltaRestClient:
 
-    def __init__(self, base_url,
-                 username, password):
+    def __init__(self, base_url, username=None, password=None, token=None):
         self.base_url = base_url
-        self.username = username
-        self.password = password
-        self.authenticate()
+        if token:
+            agent.headers.update(
+                {'Authorization': 'Bearer %s' % token, 'User-Agent': 'delta-rest-client: %s' % version})
+        else:
+            self.username = username
+            self.password = password
+            self.authenticate()
 
     # Check if payload and query are working
     def request(self, method, path, payload=None, query=None):
@@ -27,8 +31,9 @@ class DeltaRestClient:
         res = agent_request()
 
         if res.status_code == 401:
-            self.authenticate()
-            res = agent_request()
+            if self.username and self.password:
+                self.authenticate()
+                res = agent_request()
 
         res.raise_for_status()
         return res
@@ -185,6 +190,7 @@ def create_order_format(price, size, side, product_id, post_only=False):
 
     return order
 
+
 def cancel_order_format(x):
     order = {
         'id': x['id'],
@@ -203,4 +209,3 @@ def round_by_tick_size(price, tick_size, floor_or_ceil=None):
         return price - remainder + tick_size
     else:
         return price - remainder
-
