@@ -92,15 +92,9 @@ class DeltaRestClient:
             l2_orderbook['buy_book']) > 0 else 0
         return (best_buy_price, best_sell_price)
 
-    def get_wallet(self):
-        response = self.request("GET", "wallet/balance")
+    def get_wallet(self, asset):
+        response = self.request("GET", "wallet/balance", query = { 'asset_id' : asset['id'] })
         return response.json()
-
-    def get_availableMargin(self):
-        response = self.get_wallet()
-        availableMargin = Decimal(
-            response['balance']) - Decimal(response['position_margin'])
-        return availableMargin
 
     def get_price_history(self, symbol, duration=5, resolution=1):
         if duration/resolution >= 500:

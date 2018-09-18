@@ -21,7 +21,9 @@ delta_client = DeltaRestClient(
   password=''
 )
 product_id = 2
-delta_client.get_product(product_id)
+product = delta_client.get_product(product_id)
+settling_asset = product['settling_asset']
+
 order = create_order_format(7078.5, 10, "buy", product_id)
 delta_client.create_order(order) # will create order on testnet
 
@@ -32,7 +34,7 @@ delta_client.batch_create(product_id, orders)
 delta_client.get_orders()
 delta_client.get_L2_orders(product_id)
 delta_client.get_ticker(product_id)
-delta_client.get_wallet()
+delta_client.get_wallet(settling_asset)
 ```
 
 4. Verify your orders on https://testnet.delta.exchange
