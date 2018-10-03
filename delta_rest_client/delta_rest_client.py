@@ -1,52 +1,50 @@
 import requests
 import time
 import datetime
+import hashlib
+import hmac
+import base64
+import json
+
 from decimal import Decimal
 from .version import __version__ as version
 
 agent = requests.Session()
 
-
 class DeltaRestClient:
 
-    def __init__(self, base_url, username=None, password=None, token=None):
+    def __init__(self, base_url, api_key=None, api_secret=None):
         self.base_url = base_url
-        if token:
-            agent.headers.update(
-                {'Authorization': 'Bearer %s' % token, 'User-Agent': 'delta-rest-client: %s' % version})
-        else:
-            self.username = username
-            self.password = password
-            self.authenticate()
+        self.api_key = api_key
+        self.api_secret = api_secret
 
     # Check if payload and query are working
-    def request(self, method, path, payload=None, query=None):
+    def request(self, method, path, payload=None, query=None, auth=False):
         url = '%s/%s' % (self.base_url, path)
 
         def agent_request():
+            if auth:
+                if self.api_key is None or self.api_secret is None:
+                    raise Exception('Api_key or Api_secret missing')
+                timestamp = get_time_stamp()
+                signature_data = method + timestamp + '/' + path + query_string(query) + body_string(payload)
+                signature = generate_signature(self.api_secret, signature_data)
+                agent.headers.update({
+                    'api-key':self.api_key,
+                    'timestamp':timestamp,
+                    'signature':signature,
+                    'User-Agent': 'rest-client',
+                    'Content-Type': 'application/json'
+                    })
+            else:
+                agent.headers.update({'User-Agent': 'rest-client'})
             return agent.request(
-                method, url, json=payload, params=query, timeout=(3, 27)
+                method, url, data=body_string(payload), params=query, timeout=(3, 27)
             )
 
         res = agent_request()
-
-        if res.status_code == 401:
-            if self.username and self.password:
-                self.authenticate()
-                res = agent_request()
-
-        res.raise_for_status()
+        # res.raise_for_status()
         return res
-
-    def authenticate(self):
-        response = self.request(
-            'POST', 'login', {'email': self.username, 'password': self.password})
-        token = str(response.json()['token'])
-        agent.headers.update(
-            {'Authorization': 'Bearer %s' % token, 'User-Agent': 'rest-client'})
-
-    def get_username(self):
-        return self.username
 
     def get_product(self, product_id):
         response = self.request("GET", "products")
@@ -59,25 +57,28 @@ class DeltaRestClient:
         response = self.request(
             "POST",
             "orders/batch",
-            {'product_id': product_id, 'orders': orders})
+            {'product_id': product_id, 'orders': orders},
+            auth=True)
         return response
 
     def create_order(self, order):
-        response = self.request('POST', "orders", order)
+        response = self.request('POST', "orders", order, auth=True)
         return response.json()
 
     def batch_cancel(self, product_id, orders):
         response = self.request(
             "DELETE",
             "orders/batch",
-            {'product_id': product_id, 'orders': orders})
+            {'product_id': product_id, 'orders': orders},
+            auth=True)
         return response.json()
 
     def get_orders(self, query=None):
         response = self.request(
             "GET",
             "orders",
-            query=query)
+            query=query,
+            auth=True)
         return response.json()
 
     def get_L2_orders(self, product_id):
@@ -92,8 +93,8 @@ class DeltaRestClient:
             l2_orderbook['buy_book']) > 0 else 0
         return (best_buy_price, best_sell_price)
 
-    def get_wallet(self, asset):
-        response = self.request("GET", "wallet/balance", query = { 'asset_id' : asset['id'] })
+    def get_wallet(self, asset_id):
+        response = self.request("GET", "wallet/balance", query = { 'asset_id' : asset_id }, auth=True)
         return response.json()
 
     def get_price_history(self, symbol, duration=5, resolution=1):
@@ -124,35 +125,17 @@ class DeltaRestClient:
 
     def close_position(self, product_id):
         response = self.request(
-            "GET",
-            "positions")
-        response = response.json()
-        current_position = list(
-            filter(lambda x: x['product']['id'] == product_id, response))
-
-        if len(current_position) > 0:
-            size = current_position[0]['size']
-            if size > 0:
-                order = {
-                    'product_id': product_id,
-                    'size': size,
-                    'side': 'sell',
-                    'order_type': 'market_order'
-                }
-            else:
-                order = {
-                    'product_id': product_id,
-                    'size': abs(size),
-                    'side': 'buy',
-                    'order_type': 'market_order'
-                }
-            self.create_order(order=order)
-        return
+            "POST",
+            "positions/close",
+            {'product_id': product_id},
+            auth=True)
+        return response.json()
 
     def get_position(self, product_id):
         response = self.request(
             "GET",
-            "positions")
+            "positions",
+            auth=True)
         response = response.json()
         if response:
             current_position = list(
@@ -168,7 +151,8 @@ class DeltaRestClient:
             {
                 'product_id': product_id,
                 'leverage':  leverage
-            })
+            },
+            auth=True)
         return response.json()
 
 
@@ -203,3 +187,29 @@ def round_by_tick_size(price, tick_size, floor_or_ceil=None):
         return price - remainder + tick_size
     else:
         return price - remainder
+
+def generate_signature(secret, message):
+    message = bytes(message, 'utf-8')
+    secret = bytes(secret, 'utf-8')
+    hash = hmac.new(secret, message, hashlib.sha256)
+    return hash.hexdigest()
+
+def get_time_stamp():
+    d = datetime.datetime.utcnow()
+    epoch = datetime.datetime(1970,1,1)
+    return  str(int((d - epoch).total_seconds()))
+
+def query_string(query):
+    if query == None:
+        return ''
+    else:
+        query_string = '?'
+        for key, value in query.items():
+            query_string += key + '=' + str(value)
+        return query_string
+
+def body_string(body):
+    if body == None:
+        return ''
+    else:
+        return json.dumps(body, separators=(',',':'))
