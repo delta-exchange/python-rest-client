@@ -21,29 +21,27 @@ class DeltaRestClient:
     # Check if payload and query are working
     def request(self, method, path, payload=None, query=None, auth=False):
         url = '%s/%s' % (self.base_url, path)
+        if auth:
+            if self.api_key is None or self.api_secret is None:
+                raise Exception('Api_key or Api_secret missing')
+            timestamp = get_time_stamp()
+            signature_data = method + timestamp + '/' + path + query_string(query) + body_string(payload)
+            signature = generate_signature(self.api_secret, signature_data)
+            req_headers = {
+                'api-key':self.api_key,
+                'timestamp':timestamp,
+                'signature':signature,
+                'User-Agent': 'rest-client',
+                'Content-Type': 'application/json'
+                }
+        else:
+            req_headers = {'User-Agent': 'rest-client'}
 
-        def agent_request():
-            if auth:
-                if self.api_key is None or self.api_secret is None:
-                    raise Exception('Api_key or Api_secret missing')
-                timestamp = get_time_stamp()
-                signature_data = method + timestamp + '/' + path + query_string(query) + body_string(payload)
-                signature = generate_signature(self.api_secret, signature_data)
-                agent.headers.update({
-                    'api-key':self.api_key,
-                    'timestamp':timestamp,
-                    'signature':signature,
-                    'User-Agent': 'rest-client',
-                    'Content-Type': 'application/json'
-                    })
-            else:
-                agent.headers.update({'User-Agent': 'rest-client'})
-            return agent.request(
-                method, url, data=body_string(payload), params=query, timeout=(3, 27)
+        res = requests.request(
+            method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=req_headers
             )
 
-        res = agent_request()
-        # res.raise_for_status()
+        res.raise_for_status()
         return res
 
     def get_product(self, product_id):
@@ -197,7 +195,7 @@ def generate_signature(secret, message):
 def get_time_stamp():
     d = datetime.datetime.utcnow()
     epoch = datetime.datetime(1970,1,1)
-    return  str(int((d - epoch).total_seconds()))
+    return str(int((d - epoch).total_seconds()))
 
 def query_string(query):
     if query == None:
@@ -205,8 +203,8 @@ def query_string(query):
     else:
         query_string = '?'
         for key, value in query.items():
-            query_string += key + '=' + str(value)
-        return query_string
+            query_string += key + '=' + str(value) + '&'
+        return query_string[:-1]
 
 def body_string(body):
     if body == None:
