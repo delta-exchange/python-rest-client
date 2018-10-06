@@ -158,7 +158,7 @@ def create_order_format(price, size, side, product_id, post_only=False):
     order = {
         'product_id': product_id,
         'limit_price': str(price),
-        'size': size,
+        'size': int(size),
         'side': side,
         'order_type': 'limit_order',
         'post_only': post_only
