@@ -201,10 +201,10 @@ def query_string(query):
     if query == None:
         return ''
     else:
-        query_string = '?'
+        query_strings = []
         for key, value in query.items():
-            query_string += key + '=' + str(value) + '&'
-        return query_string[:-1]
+            query_strings.append(key + '=' + str(value))
+        return '?' + '&'.join(query_strings)
 
 def body_string(body):
     if body == None:
