@@ -17,8 +17,8 @@ from delta_rest_client import DeltaRestClient, create_order_format, cancel_order
 
 delta_client = DeltaRestClient(
   base_url='https://testnet-api.delta.exchange',
-  username='',
-  password=''
+  api_key='',
+  api_secret=''
 )
 product_id = 2
 product = delta_client.get_product(product_id)
@@ -41,5 +41,5 @@ delta_client.get_wallet(settling_asset)
 
 Same steps can used for production trading.
 
-5. Production url is https://trade.delta.exchange/
-6. Production base_url is https://api.delta.exchange
+5. Production base_url is https://api.delta.exchange
+6. Production trade terminal url is https://trade.delta.exchange/
