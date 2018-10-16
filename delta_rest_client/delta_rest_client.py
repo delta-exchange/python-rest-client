@@ -111,7 +111,7 @@ class DeltaRestClient:
         response = self.request("GET", "chart/history", query=query)
         return response.json()
 
-    def get_marked_price(self, product_id):
+    def get_mark_price(self, product_id):
         response = self.request(
             "GET",
             "orderbook/%s/l2" % product_id)
@@ -152,9 +152,20 @@ class DeltaRestClient:
             },
             auth=True)
         return response.json()
+    
+    def change_position_margin(self, product_id, delta_margin):
+        response = self.request(
+            'POST',
+            'positions/change_margin',
+            {
+                'product_id': product_id,
+                'delta_margin': delta_margin
+            },
+            auth=True)
+        return response.json()
 
 
-def create_order_format(price, size, side, product_id, post_only=False):
+def create_order_format(price, size, side, product_id, post_only='false'):
     order = {
         'product_id': product_id,
         'limit_price': str(price),
