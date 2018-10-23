@@ -1,5 +1,7 @@
 # python-rest-client
 
+Delta Exchange is a crypto derivatives exchange where you can trade bitcoin, ethereum, ripple futures at 20x leverage. This package is a wrapper around rest apis of Delta Exchange.
+
 # Get started
 
 1. Create an account on https://testnet.delta.exchange/signup
@@ -68,7 +70,7 @@ product_id = 2
 product = delta_client.get_product(product_id)
 position = delta_client.get_position(product_id=product_id)
 print('Liquidation Price: %s, Entry Price: %s, Margin: %s' % (
-  position['liquidation_price'], position['entry_price'], position['margin'])
+  position['liquidation_price'], position['entry_price'], position['margin']))
 
 mark_price = delta_client.get_mark_price(product_id=product_id)
 if product['product_type'] == 'inverse_future':
