@@ -28,9 +28,18 @@ product_id = 2
 product = delta_client.get_product(product_id)
 settling_asset = product['settling_asset']
 
-# Single Order
+# Single Limit Order
 order = create_order_format(7078.5, 10, "buy", product_id)
 delta_client.create_order(order) # will create order on testnet
+
+# Single Market Order
+order = {
+  'size': 10,
+  'side': 'buy',
+  'product_id': product_id,
+  'order_type': 'market_order'
+}
+delta_client.create_order(order)
 
 # Batch orders
 order1 = create_order_format(7078.5, 10, "buy", product_id)
