@@ -2,8 +2,8 @@ from delta_rest_client import DeltaRestClient, create_order_format, cancel_order
 
 delta_client = DeltaRestClient(
     base_url='https://testnet-api.delta.exchange',
-    api_key='7e72eb0167ab033bdbccb26f6e1f60',
-    api_secret='72312686abb2cb09f7147594b61ae530c9ea6a4403c9fabb6541d1299153'
+    api_key='',
+    api_secret=''
 )
 
 product_id = 3
