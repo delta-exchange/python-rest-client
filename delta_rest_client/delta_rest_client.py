@@ -11,6 +11,7 @@ from .version import __version__ as version
 
 agent = requests.Session()
 
+
 class DeltaRestClient:
 
     def __init__(self, base_url, api_key=None, api_secret=None):
@@ -25,21 +26,22 @@ class DeltaRestClient:
             if self.api_key is None or self.api_secret is None:
                 raise Exception('Api_key or Api_secret missing')
             timestamp = get_time_stamp()
-            signature_data = method + timestamp + '/' + path + query_string(query) + body_string(payload)
+            signature_data = method + timestamp + '/' + path + \
+                query_string(query) + body_string(payload)
             signature = generate_signature(self.api_secret, signature_data)
             req_headers = {
-                'api-key':self.api_key,
-                'timestamp':timestamp,
-                'signature':signature,
+                'api-key': self.api_key,
+                'timestamp': timestamp,
+                'signature': signature,
                 'User-Agent': 'rest-client',
                 'Content-Type': 'application/json'
-                }
+            }
         else:
             req_headers = {'User-Agent': 'rest-client'}
 
         res = requests.request(
             method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=req_headers
-            )
+        )
 
         res.raise_for_status()
         return res
@@ -71,6 +73,15 @@ class DeltaRestClient:
             auth=True)
         return response.json()
 
+    def batch_edit(self, product_id, orders):
+        response = self.request(
+            "PUT",
+            "orders/batch",
+            {'product_id': product_id, 'orders': orders},
+            auth=True
+        )
+        return response.json()
+
     def get_orders(self, query=None):
         response = self.request(
             "GET",
@@ -92,7 +103,8 @@ class DeltaRestClient:
         return (best_buy_price, best_sell_price)
 
     def get_wallet(self, asset_id):
-        response = self.request("GET", "wallet/balance", query = { 'asset_id' : asset_id }, auth=True)
+        response = self.request("GET", "wallet/balance",
+                                query={'asset_id': asset_id}, auth=True)
         return response.json()
 
     def get_price_history(self, symbol, duration=5, resolution=1):
@@ -152,7 +164,7 @@ class DeltaRestClient:
             },
             auth=True)
         return response.json()
-    
+
     def change_position_margin(self, product_id, delta_margin):
         response = self.request(
             'POST',
@@ -189,13 +201,18 @@ def cancel_order_format(x):
 def round_by_tick_size(price, tick_size, floor_or_ceil=None):
     remainder = price % tick_size
     if remainder == 0:
-        return price
+        price = price
     if floor_or_ceil == None:
         floor_or_ceil = 'ceil' if (remainder >= tick_size / 2) else 'floor'
     if floor_or_ceil == 'ceil':
-        return price - remainder + tick_size
+        price = price - remainder + tick_size
     else:
-        return price - remainder
+        price = price - remainder
+    number_of_decimals = len(
+        format(Decimal(repr(float(tick_size))), 'f').split('.')[1])
+    price = round(Decimal(price), number_of_decimals)
+    return price
+
 
 def generate_signature(secret, message):
     message = bytes(message, 'utf-8')
@@ -203,10 +220,12 @@ def generate_signature(secret, message):
     hash = hmac.new(secret, message, hashlib.sha256)
     return hash.hexdigest()
 
+
 def get_time_stamp():
     d = datetime.datetime.utcnow()
-    epoch = datetime.datetime(1970,1,1)
+    epoch = datetime.datetime(1970, 1, 1)
     return str(int((d - epoch).total_seconds()))
+
 
 def query_string(query):
     if query == None:
@@ -217,8 +236,9 @@ def query_string(query):
             query_strings.append(key + '=' + str(value))
         return '?' + '&'.join(query_strings)
 
+
 def body_string(body):
     if body == None:
         return ''
     else:
-        return json.dumps(body, separators=(',',':'))
+        return json.dumps(body, separators=(',', ':'))
