@@ -12,6 +12,7 @@ Delta Exchange is a crypto derivatives exchange where you can trade bitcoin, eth
 3. Follow the below snippet to trade on testnet:
    ```
 	from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size
+    
     delta_client = DeltaRestClient(
 	    base_url='https://testnet-api.delta.exchange',
 	    api_key='',
