@@ -6,7 +6,7 @@ delta_client = DeltaRestClient(
     api_secret=''
 )
 
-product_id = 3
+product_id = 13
 order1 = create_order_format(7078.5, 10, "buy", product_id)
 order2 = create_order_format(7080, 10, "buy", product_id)
 delta_client.create_order(order1)  # will create order on testnet
