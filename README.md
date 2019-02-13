@@ -95,12 +95,11 @@ cancel_response = delta_client.cancel_order(order)
 
 > **Batch Create Orders**
 ```
-response = delta_client.batch_creare(orders)
+response = delta_client.batch_create(orders)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------------|-----------------
-|
-|order        |`object`                          |     order object                    |true
+|----------------|-------------------------------|-------------------------------|-----------------------------|
+|order           |`array`                        |    array of orders            |true
 
 
 > **Batch Cancel Orders**
@@ -119,7 +118,7 @@ response = delta_client.set_leverage(product_id, leverage)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id      |`integer`                      |     id of product             |true
-|leverage        |`string`                      |     ########                   |true
+|leverage        |`string`                       |     leverage value            |true
 
 > **Open Position**
 ```
@@ -139,14 +138,14 @@ response = delta_client.close_position(product_id)
 |product_id        |`integer`                      |     id of product               |true
 
 
-> **Add/Remove Margin Position Margin**
+> **Add/Remove Position Margin**
 ```
 response = delta_client.change_position_margin(product_id, margin)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
-|product_id        |`integer`                      |     id of product            |true
-|margin            |`string`                      |     new margin                |true
+|product_id        |`integer`                    |     id of product             |true
+|margin            |`string`                     |     new margin                |true
 
 
 
@@ -154,7 +153,7 @@ response = delta_client.change_position_margin(product_id, margin)
 ```
 response = delta_client.get_wallet(asset_id)
 ```
-|Name            |     Type                      |     Description                      |Required                         |
+|Name            |     Type                      |     Description               |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |asset_id        |`integer`                      |     id of asset               |true
 
@@ -166,15 +165,14 @@ response = delta_client.get_price_history(symbol, duration, resolution)
 |Name            |     Type                      |     Description               |Required                         |
 |----------------|-------------------------------|-------------------------------|--------------------
 |symbol          |`integer`                      |     id of product             |true
-|duration        |`string`                       |     default to 5         |false
-|resolution      |`string`                       |     default to 1          |false
+|duration        |`string`                       |     default to 5              |false
+|resolution      |`string`                       |     default to 1              |false
 
 > **Mark Price**
 ```
-response = delta_client.get_price_history(symbol, duration, resolution) 
+response = delta_client.get_mark_price(product_id) 
 ```
 |Name            |     Type                      |     Description               |Required                         |
 |----------------|-------------------------------|-------------------------------|--------------------
-|symbol          |`integer`                      |     id of product             |true
-|duration        |`string`                       |     default to 5         |false
-|resolution      |`string`                       |     default to 1          |false
+|product_id      |`integer`                      |     id of product             |true
+
