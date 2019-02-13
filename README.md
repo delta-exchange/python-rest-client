@@ -55,17 +55,9 @@ response = delta_client.get_L2_orders(product_id)
 orders = delta_client.get_orders()
 ```
 
-> **Create Order Format**
-```
-order = create_order_format(price, size, side, product_id)
-```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|product_id        |`integer`                      |     id of product               |true
-
-
 > **Place Order**
 ```
+order = create_order_format(price, size, side, product_id)
 order_response = delta_client.create_order(order)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
@@ -73,19 +65,9 @@ order_response = delta_client.create_order(order)
 |order        |`object`                      |     order object             |true
 
 
-
-> **Cancel Order Format**
-```
-cancel_order = cancel_order_format(order)
-```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|order        |`object`                      |     order object             |true
-
-
-
 > **Cancel Order**
 ```
+order = cancel_order_format(order)
 cancel_response = delta_client.cancel_order(order)
 ```
 
