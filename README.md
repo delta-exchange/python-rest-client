@@ -29,7 +29,7 @@ settling_asset = product['settling_asset']
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                      |     id of product               |true
-|
+
 
 > **Get Ticker Data**
 ```
@@ -38,7 +38,7 @@ response = delta_client.get_ticker(product_id)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                    |     id of product             |true
-|
+
 
 > **Get Orderbook**
 ```
@@ -47,7 +47,7 @@ response = delta_client.get_L2_orders(product_id)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|------------------------|
 |product_id        |`integer`                      |     id of product              |true
-|
+
 
 > **Open Orders**
 ```
@@ -61,7 +61,7 @@ order = create_order_format(price, size, side, product_id)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                      |     id of product               |true
-|
+
 
 > **Place Order**
 ```
@@ -70,7 +70,7 @@ order_response = delta_client.create_order(order)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |order        |`object`                      |     order object             |true
-|
+
 
 
 > **Cancel Order Format**
@@ -80,7 +80,7 @@ cancel_order = cancel_order_format(order)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |order        |`object`                      |     order object             |true
-|
+
 
 
 > **Cancel Order**
@@ -91,7 +91,7 @@ cancel_response = delta_client.cancel_order(order)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |order        |`object`                      |     order object             |true
-|
+
 
 > **Batch Create Orders**
 ```
@@ -101,7 +101,7 @@ response = delta_client.batch_creare(orders)
 |----------------|-------------------------------|-------------------------------------|-----------------
 |
 |order        |`object`                          |     order object                    |true
-|
+
 
 > **Batch Cancel Orders**
 ```
@@ -110,7 +110,7 @@ response = delta_client.batch_cancel(orders)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |order           |`array`                        |    array of orders            |true
-|
+
 
 > **Change Order Leverage**
 ```
@@ -120,7 +120,7 @@ response = delta_client.set_leverage(product_id, leverage)
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id      |`integer`                      |     id of product             |true
 |leverage        |`string`                      |     ########                   |true
-|
+
 > **Open Position**
 ```
 response = delta_client.get_position(product_id)
@@ -128,7 +128,7 @@ response = delta_client.get_position(product_id)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                      |     id of product               |true
-|
+
 
 > **Close Position**
 ```
@@ -137,7 +137,7 @@ response = delta_client.close_position(product_id)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                      |     id of product               |true
-|
+
 
 > **Add/Remove Margin Position Margin**
 ```
@@ -147,7 +147,7 @@ response = delta_client.change_position_margin(product_id, margin)
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                      |     id of product            |true
 |margin            |`string`                      |     new margin                |true
-|
+
 
 
 > **Get Wallet**
@@ -157,7 +157,7 @@ response = delta_client.get_wallet(asset_id)
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |asset_id        |`integer`                      |     id of asset               |true
-|
+
 
 > **Price History**
 ```
@@ -178,4 +178,3 @@ response = delta_client.get_price_history(symbol, duration, resolution)
 |symbol          |`integer`                      |     id of product             |true
 |duration        |`string`                       |     default to 5         |false
 |resolution      |`string`                       |     default to 1          |false
-|
