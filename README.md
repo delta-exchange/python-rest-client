@@ -19,6 +19,11 @@ Delta Exchange is a crypto derivatives exchange where you can trade bitcoin, eth
 	    api_secret=''
    )
       ```
+4. Get json list of available contracts to trade from given url and note down the product_id and asset_id, as it will be used in most of the api calls.
+```
+production -  https://api.delta.exchange/products 
+testnet -  https://testnet-api.delta.exchange/products  
+```
 
 ## Methods
 
