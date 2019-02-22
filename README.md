@@ -1,6 +1,9 @@
 # Python Rest Client for Delta Api
 
 Delta Exchange is a crypto derivatives exchange where you can trade bitcoin, ethereum, ripple futures upto 100x leverage. This package is a wrapper around rest apis of Delta Exchange.
+User Guide - https://www.delta.exchange/user-guide
+API Documentation - https://docs.delta.exchange
+
 
 # Get started
 
@@ -28,13 +31,14 @@ testnet -  https://testnet-api.delta.exchange/products
 ## Methods
 
 >**Get Product Detail**
+
 ```
 product = delta_client.get_product(product_id)
 settling_asset = product['settling_asset']
 ```
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
-|product_id        |`integer`                      |     id of product               |true
+|product_id        |`integer`                    |     id of product             |true
 
 
 > **Get Ticker Data**
@@ -83,7 +87,7 @@ cancel_response = delta_client.cancel_order(order)
 
 > **Batch Create Orders**
 ```
-response = delta_client.batch_create(orders)
+response = delta_client.batch_create(product_id, orders)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
@@ -92,7 +96,7 @@ response = delta_client.batch_create(orders)
 
 > **Batch Cancel Orders**
 ```
-response = delta_client.batch_cancel(orders)
+response = delta_client.batch_cancel(product_id, orders)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
@@ -123,7 +127,7 @@ response = delta_client.close_position(product_id)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
 |----------------|-------------------------------|-------------------------------|-----------------------------|
-|product_id        |`integer`                      |     id of product               |true
+|product_id        |`integer`                    |     id of product             |true
 
 
 > **Add/Remove Position Margin**
