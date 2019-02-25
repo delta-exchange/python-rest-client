@@ -36,8 +36,8 @@ testnet -  https://testnet-api.delta.exchange/products
 product = delta_client.get_product(product_id)
 settling_asset = product['settling_asset']
 ```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
+|Name            |     Type                      |     Description               |  Required                         |
+|----------------|-------------------------------|-------------------------------|-------------------------|
 |product_id        |`integer`                    |     id of product             |true
 
 
