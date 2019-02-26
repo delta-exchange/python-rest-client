@@ -31,7 +31,7 @@ testnet -  https://testnet-api.delta.exchange/products
 ## Methods
 
 >**Get Product Detail**
-Get product detail of current product id. [response](https://docs.delta.exchange/#delta-exchange-api-products)
+Get product detail of current product id.\n [See sample response](https://docs.delta.exchange/#delta-exchange-api-products)
 
 ```
 product = delta_client.get_product(product_id) # Current Instrument
@@ -43,7 +43,7 @@ settling_asset = product['settling_asset'] # Currency in which the pnl will be r
 
 
 > **Get Ticker Data**
-[response](https://docs.delta.exchange/#get-24hr-ticker)
+[See sample response](https://docs.delta.exchange/#get-24hr-ticker)
 ```
 response = delta_client.get_ticker(product_id)
 ```
@@ -53,8 +53,8 @@ response = delta_client.get_ticker(product_id)
 
 
 > **Get Orderbook**
-Get level-2 orderbook of the product.
-[response](https://docs.delta.exchange/#delta-exchange-api-orderbook)
+Get level-2 orderbook of the product.\n
+[See sample response](https://docs.delta.exchange/#delta-exchange-api-orderbook)
 ```
 response = delta_client.get_L2_orders(product_id)
 ```
@@ -64,8 +64,8 @@ response = delta_client.get_L2_orders(product_id)
 
 
 > **Open Orders**
-Get open orders. Authorization required.
-[response](https://docs.delta.exchange/#get-orders)
+Get open orders.\n Authorization required.
+[See sample response](https://docs.delta.exchange/#get-orders)
 ```
 orders = delta_client.get_orders()
 ```
@@ -74,19 +74,19 @@ This method creates order object to pass in create_order.
 ```
 order = create_order_format(product_id, size, side, price, order_type=OrderType.LIMIT, time_in_force=TimeInForce.GTC)
 ```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
+|Name            |     Type                      |     Description                |Required                    |
+|----------------|-------------------------------|--------------------------------|----------------------------|
 |product_id      |`int`                          |     id of product              |true                        |
 |size            |`int`                          |     order size                 |true                        |
 |side            |`string`                       |     buy or sell                |true                        |
-|order_type      |`string`                       |     limit or market            |false (LIMIT by default) |
+|order_type      |`string`                       |     limit or market            |false (LIMIT by default)    |
 |time_in_force   |`string`                       |     IOC or GTC or FOK          |false (GTC by default)      |
-|post_only       |`string`                       |     id of product              |true                        |
+|post_only       |`string`                       |     true or false              |false (false by default)    |
 
 
 > **Place Order**
-Create a new market order or limit order.
-Authorization required. [response](https://docs.delta.exchange/#place-order)
+Create a new market order or limit order.\n
+Authorization required. [See sample response](https://docs.delta.exchange/#place-order)
 
 ```
 order = create_order_format(product_id, size, side, price, )
@@ -98,8 +98,8 @@ order_response = delta_client.create_order(order)
 
 
 > **Cancel Order**
-Delete open order. 
-Authorization required. [response](https://docs.delta.exchange/#cancel-order)
+Delete open order. \n
+Authorization required. [See sample response](https://docs.delta.exchange/#cancel-order)
 ```
 order = cancel_order_format(order)
 cancel_response = delta_client.cancel_order(order)
@@ -111,8 +111,8 @@ cancel_response = delta_client.cancel_order(order)
 
 
 > **Batch Create Orders**
-Create multiple limit orders. Max order size is 5.
-Authorization required. [response](https://docs.delta.exchange/#create-batch-orders)
+Create multiple limit orders. Max number of order is 5. \n
+Authorization required. [See sample response](https://docs.delta.exchange/#create-batch-orders)
 ```
 response = delta_client.batch_create(product_id, orders)
 ```
@@ -122,8 +122,8 @@ response = delta_client.batch_create(product_id, orders)
 
 
 > **Batch Cancel Orders**
-Cancel multiple open orders. Max order size is 5.
-Authorization required. [response](https://docs.delta.exchange/#delele-batch-orders)
+Cancel multiple open orders. Max number of order is 5. \n
+Authorization required. [See sample response](https://docs.delta.exchange/#delele-batch-orders)
 ```
 response = delta_client.batch_cancel(product_id, orders)
 ```
@@ -133,8 +133,8 @@ response = delta_client.batch_cancel(product_id, orders)
 
 
 > **Change Order Leverage**
-Change leverage for new orders.
-Authorization required. [response](https://docs.delta.exchange/#change-order-leverage)
+Change leverage for new orders.\n
+Authorization required. [See sample response](https://docs.delta.exchange/#change-order-leverage)
 ```
 response = delta_client.set_leverage(product_id, leverage)
 ```
@@ -144,8 +144,8 @@ response = delta_client.set_leverage(product_id, leverage)
 |leverage        |`string`                       |     leverage value            |true
 
 > **Open Position**
-Current open position of product.
-Authorization required. [response](https://docs.delta.exchange/#get-open-positions)
+Current open position of product.\n
+Authorization required. [See sample response](https://docs.delta.exchange/#get-open-positions)
 ```
 response = delta_client.get_position(product_id)
 ```
@@ -155,8 +155,8 @@ response = delta_client.get_position(product_id)
 
 
 > **Close Position**
-Close position of product.
-Authorization required. [response](https://docs.delta.exchange/#close-position)
+Close position of product.\n
+Authorization required. [See sample response](https://docs.delta.exchange/#close-position)
 ```
 response = delta_client.close_position(product_id)
 ```
@@ -166,8 +166,8 @@ response = delta_client.close_position(product_id)
 
 
 > **Add/Remove Position Margin**
-Add/Remove margin to/from open position.
-Authorization required. [response](https://docs.delta.exchange/#add-remove-position-margin)
+Add/Remove margin to/from open position.\n
+Authorization required. [See sample response](https://docs.delta.exchange/#add-remove-position-margin)
 
 ```
 response = delta_client.change_position_margin(product_id, margin)
@@ -180,8 +180,8 @@ response = delta_client.change_position_margin(product_id, margin)
 
 
 > **Get Wallet**
-Get user's balance.
-Authorization required. [response](https://docs.delta.exchange/#get-wallet-balances)
+Get user's balance.\n
+Authorization required. [See sample response](https://docs.delta.exchange/#get-wallet-balances)
 ```
 response = delta_client.get_wallet(asset_id)
 ```
@@ -191,8 +191,8 @@ response = delta_client.get_wallet(asset_id)
 
 
 > **Price History**
-Get price history.
-[response](https://docs.delta.exchange/#delta-exchange-api-ohlc-candles)
+Get price history.\n
+[See sample response](https://docs.delta.exchange/#delta-exchange-api-ohlc-candles)
 ```
 response = delta_client.get_price_history(symbol, duration, resolution) 
 ```
