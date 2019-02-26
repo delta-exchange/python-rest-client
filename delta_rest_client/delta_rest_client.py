@@ -5,11 +5,23 @@ import hashlib
 import hmac
 import base64
 import json
+from enum import Enum
 
 from decimal import Decimal
 from .version import __version__ as version
 
 agent = requests.Session()
+
+
+class OrderType(Enum):
+    MARKET = 'market_order'
+    LIMIT = 'limit_order'
+
+
+class TimeInForce(Enum):
+    FOK = 'fok'
+    IOC = 'ioc'
+    GTC = 'gtc'
 
 
 class DeltaRestClient:
@@ -63,6 +75,7 @@ class DeltaRestClient:
 
     def create_order(self, order):
         response = self.request('POST', "orders", order, auth=True)
+        print(response)
         return response.json()
 
     def batch_cancel(self, product_id, orders):
@@ -177,16 +190,18 @@ class DeltaRestClient:
         return response.json()
 
 
-def create_order_format(price, size, side, product_id, post_only='false'):
+def create_order_format(product_id, size, side, price=None, time_in_force=TimeInForce.GTC, order_type=OrderType.LIMIT, post_only='false'):
     order = {
         'product_id': product_id,
-        'limit_price': str(price),
         'size': int(size),
         'side': side,
-        'order_type': 'limit_order',
+        'order_type': order_type.value,
         'post_only': post_only
     }
-
+    if order_type.value == 'limit_order':
+        order['limit_price'] = str(price)
+        order['time_in_force'] = time_in_force.value
+    print(order)
     return order
 
 

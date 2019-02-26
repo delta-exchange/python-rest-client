@@ -14,7 +14,7 @@ API Documentation - https://docs.delta.exchange
 	```
 3. Follow the below snippet to trade on testnet:
    ```
-	from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size
+	from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size, OrderType, TimeInForce
     
     delta_client = DeltaRestClient(
 	    base_url='https://testnet-api.delta.exchange',
@@ -69,13 +69,27 @@ Get open orders. Authorization required.
 ```
 orders = delta_client.get_orders()
 ```
+> **Create Order Format**
+This method creates order object to pass in create_order.
+```
+order = create_order_format(product_id, size, side, price, order_type=OrderType.LIMIT, time_in_force=TimeInForce.GTC)
+```
+|Name            |     Type                      |     Description                      |Required                         |
+|----------------|-------------------------------|-------------------------------|-----------------------------|
+|product_id      |`int`                          |     id of product              |true                        |
+|size            |`int`                          |     order size                 |true                        |
+|side            |`string`                       |     buy or sell                |true                        |
+|order_type      |`string`                       |     limit or market            |false (LIMIT by default) |
+|time_in_force   |`string`                       |     IOC or GTC or FOK          |false (GTC by default)      |
+|post_only       |`string`                       |     id of product              |true                        |
+
 
 > **Place Order**
 Create a new market order or limit order.
 Authorization required. [response](https://docs.delta.exchange/#place-order)
 
 ```
-order = create_order_format(price, size, side, product_id)
+order = create_order_format(product_id, size, side, price, )
 order_response = delta_client.create_order(order)
 ```
 |Name            |     Type                      |     Description                      |Required                         |
