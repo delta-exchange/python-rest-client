@@ -144,14 +144,13 @@ order_response = delta_client.place_stop_order(
 Delete open order.
 Authorization required. [See sample response](https://docs.delta.exchange/#cancel-order)
 ```
-order = cancel_order_format(order)
-cancel_response = delta_client.cancel_order(order)
+cancel_response = delta_client.cancel_order(product_id, order_id)
 ```
 
 |Name                      |     Type        |     Description                           |Required                    |
 |--------------------------|-----------------|-------------------------------------------|----------------------------|
 |product_id                |`int`            |     id of product                         |true                        |
-|order_id                      |`int`            |     order size                            |true                        |
+|order_id                  |`int`            |     order id                              |true                        |
 
 > **Batch Create Orders**
 
