@@ -14,7 +14,7 @@ API Documentation - https://docs.delta.exchange
 	```
 3. Follow the below snippet to trade on testnet:
    ```
-	from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size
+	from delta_rest_client import DeltaRestClient, round_by_tick_size, OrderType, TimeInForce
     
     delta_client = DeltaRestClient(
 	    base_url='https://testnet-api.delta.exchange',
@@ -23,25 +23,30 @@ API Documentation - https://docs.delta.exchange
    )
       ```
 4. Get json list of available contracts to trade from given url and note down the product_id and asset_id, as it will be used in most of the api calls.
-```
+
 production -  https://api.delta.exchange/products 
 testnet -  https://testnet-api.delta.exchange/products  
-```
+
 
 ## Methods
 
 >**Get Product Detail**
 
+Get product detail of current product.
+[See sample response](https://docs.delta.exchange/#delta-exchange-api-products)
+
 ```
-product = delta_client.get_product(product_id)
-settling_asset = product['settling_asset']
+product = delta_client.get_product(product_id) # Current Instrument
+settling_asset = product['settling_asset'] # Currency in which the pnl will be realised
 ```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
+|Name            |     Type                      |     Description               |  Required                         |
+|----------------|-------------------------------|-------------------------------|-------------------------|
 |product_id        |`integer`                    |     id of product             |true
 
 
 > **Get Ticker Data**
+
+[See sample response](https://docs.delta.exchange/#get-24hr-ticker)
 ```
 response = delta_client.get_ticker(product_id)
 ```
@@ -51,41 +56,106 @@ response = delta_client.get_ticker(product_id)
 
 
 > **Get Orderbook**
+
+Get level-2 orderbook of the product.
+[See sample response](https://docs.delta.exchange/#delta-exchange-api-orderbook)
 ```
 response = delta_client.get_L2_orders(product_id)
 ```
-|Name            |     Type                      |     Description                      |Required                         |
+|Name            |     Type                      |     Description               |Required                |
 |----------------|-------------------------------|-------------------------------|------------------------|
-|product_id        |`integer`                      |     id of product              |true
+|product_id      |`integer`                      |     id of product             |true                    |
 
 
 > **Open Orders**
+
+Get open orders.
+Authorization required. [See sample response](https://docs.delta.exchange/#get-orders)
 ```
 orders = delta_client.get_orders()
 ```
 
 > **Place Order**
+
+Create a new market order or limit order.
+Authorization required. [See sample response](https://docs.delta.exchange/#place-order)
+
 ```
-order = create_order_format(price, size, side, product_id)
-order_response = delta_client.create_order(order)
+order_response = delta_client.place_stop_order(
+        product_id=product_id,
+        size=10,
+        side='sell',
+				limit_price='7800',
+        order_type=OrderType.LIMIT,       
+     		time_in_force=TimeInForce.FOK
+    )
 ```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|order        |`object`                      |     order object             |true
+|Name            |     Type                      |     Description                      |Required                    |
+|----------------|-------------------------------|--------------------------------------|----------------------------|
+|product_id      |`int`                          |     id of product                    |true                        |
+|size            |`int`                          |     order size                       |true                        |
+|side            |`string`                       |     buy or sell                      |true                        |
+|limit_price     |`string`                       |order price (ignored if market order) |false                       |
+|order_type      |`string`                       |     limit or market                  |false (LIMIT by default)    |
+|time_in_force   |`string`                       |     IOC or GTC or FOK                |false (GTC by default)      |
+|post_only       |`string`                       |     true or false                    |false (false by default)    |
+
+> **Place Stop Order**
+
+Add stop loss or trailing stop loss.
+Authorization required. [See sample response](https://docs.delta.exchange/#place-order)
+
+```
+# Trailing Stop loss
+order_response = delta_client.place_stop_order(
+        product_id=product_id,
+        size=10,
+        side='sell',
+				limit_price='7800',
+        order_type=OrderType.LIMIT,
+        trail_amount='20',              
+        isTrailingStopLoss=True
+    )
+
+# Stop loss
+order_response = delta_client.place_stop_order(
+        product_id=product_id,
+        size=10,
+        side='sell',
+        order_type=OrderType.MARKET,
+        stop_price='8010.5', 
+    )
+```
+|Name                      |     Type        |     Description                           |Required                    |
+|--------------------------|-----------------|-------------------------------------------|----------------------------|
+|product_id                |`int`            |     id of product                         |true                        |
+|size                      |`int`            |     order size                            |true                        |
+|side                      |`string`         |     buy or sell                           |true                        |
+|stop_price                |`string`         |   price at which order will be triggered  |false(required if stop_loss)|
+|trail_amount              |`string`         |   trail price                             |false(required if trailing_stop_loss)|
+|limit_price               |`string`         |   order price (ignored if market order)   |false                       |
+|order_type                |`string`         |     limit or market                       |false (LIMIT by default)    |
+|time_in_force             |`string`         |     IOC or GTC or FOK                     |false (GTC by default)      |
+|isTrailingStopLoss        |`string`         |     true or false                         |false (false by default)    |
 
 
 > **Cancel Order**
+
+Delete open order.
+Authorization required. [See sample response](https://docs.delta.exchange/#cancel-order)
 ```
-order = cancel_order_format(order)
-cancel_response = delta_client.cancel_order(order)
+cancel_response = delta_client.cancel_order(product_id, order_id)
 ```
 
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|order        |`object`                      |     order object             |true
-
+|Name                      |     Type        |     Description                           |Required                    |
+|--------------------------|-----------------|-------------------------------------------|----------------------------|
+|product_id                |`int`            |     id of product                         |true                        |
+|order_id                  |`int`            |     order id                              |true                        |
 
 > **Batch Create Orders**
+
+Create multiple limit orders. Max number of order is 5. 
+Authorization required. [See sample response](https://docs.delta.exchange/#create-batch-orders)
 ```
 response = delta_client.batch_create(product_id, orders)
 ```
@@ -95,6 +165,9 @@ response = delta_client.batch_create(product_id, orders)
 
 
 > **Batch Cancel Orders**
+
+Cancel multiple open orders. Max number of order is 5. 
+Authorization required. [See sample response](https://docs.delta.exchange/#delele-batch-orders)
 ```
 response = delta_client.batch_cancel(product_id, orders)
 ```
@@ -104,6 +177,9 @@ response = delta_client.batch_cancel(product_id, orders)
 
 
 > **Change Order Leverage**
+
+Change leverage for new orders.
+Authorization required. [See sample response](https://docs.delta.exchange/#change-order-leverage)
 ```
 response = delta_client.set_leverage(product_id, leverage)
 ```
@@ -113,6 +189,9 @@ response = delta_client.set_leverage(product_id, leverage)
 |leverage        |`string`                       |     leverage value            |true
 
 > **Open Position**
+
+Current open position of product.
+Authorization required. [See sample response](https://docs.delta.exchange/#get-open-positions)
 ```
 response = delta_client.get_position(product_id)
 ```
@@ -121,16 +200,11 @@ response = delta_client.get_position(product_id)
 |product_id        |`integer`                      |     id of product               |true
 
 
-> **Close Position**
-```
-response = delta_client.close_position(product_id)
-```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|product_id        |`integer`                    |     id of product             |true
+> **Change Leverage Positions**
 
+Change leverage for open position by adding or removing margin to an open position.
+Authorization required. [See sample response](https://docs.delta.exchange/#add-remove-position-margin)
 
-> **Add/Remove Position Margin**
 ```
 response = delta_client.change_position_margin(product_id, margin)
 ```
@@ -140,8 +214,10 @@ response = delta_client.change_position_margin(product_id, margin)
 |margin            |`string`                     |     new margin                |true
 
 
-
 > **Get Wallet**
+
+Get user's balance.
+Authorization required. [See sample response](https://docs.delta.exchange/#get-wallet-balances)
 ```
 response = delta_client.get_wallet(asset_id)
 ```
@@ -151,6 +227,9 @@ response = delta_client.get_wallet(asset_id)
 
 
 > **Price History**
+
+Get price history.
+[See sample response](https://docs.delta.exchange/#delta-exchange-api-ohlc-candles)
 ```
 response = delta_client.get_price_history(symbol, duration, resolution) 
 ```

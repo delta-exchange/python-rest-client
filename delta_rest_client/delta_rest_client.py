@@ -5,11 +5,23 @@ import hashlib
 import hmac
 import base64
 import json
+from enum import Enum
 
 from decimal import Decimal
 from .version import __version__ as version
 
 agent = requests.Session()
+
+
+class OrderType(Enum):
+    MARKET = 'market_order'
+    LIMIT = 'limit_order'
+
+
+class TimeInForce(Enum):
+    FOK = 'fok'
+    IOC = 'ioc'
+    GTC = 'gtc'
 
 
 class DeltaRestClient:
@@ -133,14 +145,6 @@ class DeltaRestClient:
     def get_leverage(self):
         raise Exception('Method not implemented')
 
-    def close_position(self, product_id):
-        response = self.request(
-            "POST",
-            "positions/close",
-            {'product_id': product_id},
-            auth=True)
-        return response.json()
-
     def get_position(self, product_id):
         response = self.request(
             "GET",
@@ -176,6 +180,57 @@ class DeltaRestClient:
             auth=True)
         return response.json()
 
+    def cancel_order(self, product_id, order_id):
+        order = {
+            'id': order_id,
+            'product_id': product_id
+        }
+        response = self.request('DELETE', "orders", order, auth=True).json()
+        return response
+
+    def place_stop_order(self, product_id, size, side, stop_price=None, limit_price=None, trail_amount=None, order_type=OrderType.LIMIT, isTrailingStopLoss=False):
+        order = {
+            'product_id': product_id,
+            'size': int(size),
+            'side': side,
+            'order_type': order_type.value,
+            'stop_order_type': 'stop_loss_order',
+        }
+        if order_type.value == 'limit':
+            if limit_price is None:
+                raise Exception('limit_price is nil')
+
+            order['limit_price'] = str(limit_price)
+
+        if isTrailingStopLoss is True:
+            if trail_amount is None:
+                raise Exception('trail_amount is nil')
+            order['trail_amount'] = str(
+                trail_amount) if side == 'buy' else str(-1 * trail_amount)
+        else:
+            if stop_price is None:
+                raise Exception('stop_price is nil')
+            order['stop_price'] = str(stop_price)
+        response = self.create_order(order)
+        return response
+
+    def place_order(self, product_id, size, side, limit_price=None, time_in_force=None, order_type=OrderType.LIMIT, post_only='false'):
+        order = {
+            'product_id': product_id,
+            'size': int(size),
+            'side': side,
+            'order_type': order_type.value,
+            'post_only': post_only
+        }
+        if order_type.value == 'limit_order':
+            order['limit_price'] = str(limit_price)
+
+        if time_in_force:
+            order['time_in_force'] = time_in_force.value
+
+        response = self.create_order(order)
+        return response
+
 
 def create_order_format(price, size, side, product_id, post_only='false'):
     order = {
@@ -186,7 +241,6 @@ def create_order_format(price, size, side, product_id, post_only='false'):
         'order_type': 'limit_order',
         'post_only': post_only
     }
-
     return order
 
 
