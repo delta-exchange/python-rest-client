@@ -32,13 +32,7 @@ testnet -  https://testnet-api.delta.exchange/products
 
 >**Get Product Detail**
 
-Get product detail of current product id.
-[response](https://docs.delta.exchange/#delta-exchange-api-products)
-
-
->**Get Product Detail**
-
-Get product detail of current product id.
+Get product detail of current product.
 [See sample response](https://docs.delta.exchange/#delta-exchange-api-products)
 
 ```
@@ -80,21 +74,6 @@ Authorization required. [See sample response](https://docs.delta.exchange/#get-o
 ```
 orders = delta_client.get_orders()
 ```
-> **Create Order Format**
-
-This method creates order object to pass in create_order.
-```
-order = create_order_format(product_id, size, side, price, order_type=OrderType.LIMIT, time_in_force=TimeInForce.GTC)
-```
-|Name            |     Type                      |     Description                |Required                    |
-|----------------|-------------------------------|--------------------------------|----------------------------|
-|product_id      |`int`                          |     id of product              |true                        |
-|size            |`int`                          |     order size                 |true                        |
-|side            |`string`                       |     buy or sell                |true                        |
-|order_type      |`string`                       |     limit or market            |false (LIMIT by default)    |
-|time_in_force   |`string`                       |     IOC or GTC or FOK          |false (GTC by default)      |
-|post_only       |`string`                       |     true or false              |false (false by default)    |
-
 
 > **Place Order**
 
@@ -102,12 +81,55 @@ Create a new market order or limit order.
 Authorization required. [See sample response](https://docs.delta.exchange/#place-order)
 
 ```
-order = create_order_format(product_id, size, side, price, )
-order_response = delta_client.create_order(order)
+order_response = delta_client.place_order(product_id, size, side, limit_price, OrderType.LIMIT, 					    						time_in_force=TimeInForce.GTC)
 ```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|order        |`object`                      |     order object             |true
+|Name            |     Type                      |     Description                      |Required                    |
+|----------------|-------------------------------|--------------------------------------|----------------------------|
+|product_id      |`int`                          |     id of product                    |true                        |
+|size            |`int`                          |     order size                       |true                        |
+|side            |`string`                       |     buy or sell                      |true                        |
+|limit_price     |`string`                       |order price (ignored if market order) |false                       |
+|order_type      |`string`                       |     limit or market                  |false (LIMIT by default)    |
+|time_in_force   |`string`                       |     IOC or GTC or FOK                |false (GTC by default)      |
+|post_only       |`string`                       |     true or false                    |false (false by default)    |
+
+> **Place Stop Order**
+
+Add stop loss or trailing stop loss.
+Authorization required. [See sample response](https://docs.delta.exchange/#place-order)
+
+```
+# Trailing Stop loss
+order_response = delta_client.place_stop_order(
+        product_id=product_id,
+        size=10,
+        side='sell',
+				limit_price='7800'
+        order_type=OrderType.LIMIT,
+        trail_amount='20',              # required only when isTrailingStopLoss is True
+        isTrailingStopLoss=True
+    )
+
+# Stop loss
+order_response = delta_client.place_stop_order(
+        product_id=product_id,
+        size=10,
+        side='sell',
+        order_type=OrderType.MARKET,
+        stop_price=stop_price, # required only when isTrailingStopLoss is F
+    )
+```
+|Name                      |     Type        |     Description                           |Required                    |
+|--------------------------|-----------------|-------------------------------------------|----------------------------|
+|product_id                |`int`            |     id of product                         |true                        |
+|size                      |`int`            |     order size                            |true                        |
+|side                      |`string`         |     buy or sell                           |true                        |
+|stop_price                |`string`         |   price at which order will be triggered  |false(required if stop_loss)|
+|trail_amount              |`string`         |   trail price                             |false(required if trailing_stop_loss)|
+|limit_price               |`string`         |   order price (ignored if market order)   |false                       |
+|order_type                |`string`         |     limit or market                       |false (LIMIT by default)    |
+|time_in_force             |`string`         |     IOC or GTC or FOK                     |false (GTC by default)      |
+|isTrailingStopLoss        |`string`         |     true or false                         |false (false by default)    |
 
 
 > **Cancel Order**
