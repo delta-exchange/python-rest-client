@@ -14,7 +14,7 @@ API Documentation - https://docs.delta.exchange
 	```
 3. Follow the below snippet to trade on testnet:
    ```
-	from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size, OrderType, TimeInForce
+	from delta_rest_client import DeltaRestClient, round_by_tick_size, OrderType, TimeInForce
     
     delta_client = DeltaRestClient(
 	    base_url='https://testnet-api.delta.exchange',
@@ -201,18 +201,6 @@ response = delta_client.get_position(product_id)
 |product_id        |`integer`                      |     id of product               |true
 
 
-> **Close Position**
-
-Close position of product.
-Authorization required. [See sample response](https://docs.delta.exchange/#close-position)
-```
-response = delta_client.close_position(product_id)
-```
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|product_id        |`integer`                    |     id of product             |true
-
-
 > **Change Leverage Positions**
 
 Change leverage for open position by adding or removing margin to an open position.
@@ -225,7 +213,6 @@ response = delta_client.change_position_margin(product_id, margin)
 |----------------|-------------------------------|-------------------------------|-----------------------------|
 |product_id        |`integer`                    |     id of product             |true
 |margin            |`string`                     |     new margin                |true
-
 
 
 > **Get Wallet**

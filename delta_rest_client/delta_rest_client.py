@@ -214,7 +214,7 @@ class DeltaRestClient:
         response = self.create_order(order)
         return response
 
-    def place_order(self, product_id, size, side, limit_price=None, time_in_force=TimeInForce.GTC, order_type=OrderType.LIMIT, post_only='false'):
+    def place_order(self, product_id, size, side, limit_price=None, time_in_force=None, order_type=OrderType.LIMIT, post_only='false'):
         order = {
             'product_id': product_id,
             'size': int(size),
@@ -224,6 +224,8 @@ class DeltaRestClient:
         }
         if order_type.value == 'limit_order':
             order['limit_price'] = str(limit_price)
+
+        if time_in_force:
             order['time_in_force'] = time_in_force.value
 
         response = self.create_order(order)
