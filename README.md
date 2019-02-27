@@ -62,9 +62,9 @@ Get level-2 orderbook of the product.
 ```
 response = delta_client.get_L2_orders(product_id)
 ```
-|Name            |     Type                      |     Description                      |Required                         |
+|Name            |     Type                      |     Description               |Required                |
 |----------------|-------------------------------|-------------------------------|------------------------|
-|product_id        |`integer`                      |     id of product              |true
+|product_id      |`integer`                      |     id of product             |true                    |
 
 
 > **Open Orders**
@@ -81,7 +81,14 @@ Create a new market order or limit order.
 Authorization required. [See sample response](https://docs.delta.exchange/#place-order)
 
 ```
-order_response = delta_client.place_order(product_id, size, side, limit_price, OrderType.LIMIT, 					    						time_in_force=TimeInForce.GTC)
+order_response = delta_client.place_stop_order(
+        product_id=product_id,
+        size=10,
+        side='sell',
+				limit_price='7800',
+        order_type=OrderType.LIMIT,       
+     		time_in_force=TimeInForce.FOK
+    )
 ```
 |Name            |     Type                      |     Description                      |Required                    |
 |----------------|-------------------------------|--------------------------------------|----------------------------|
@@ -104,9 +111,9 @@ order_response = delta_client.place_stop_order(
         product_id=product_id,
         size=10,
         side='sell',
-				limit_price='7800'
+				limit_price='7800',
         order_type=OrderType.LIMIT,
-        trail_amount='20',              # required only when isTrailingStopLoss is True
+        trail_amount='20',              
         isTrailingStopLoss=True
     )
 
@@ -116,7 +123,7 @@ order_response = delta_client.place_stop_order(
         size=10,
         side='sell',
         order_type=OrderType.MARKET,
-        stop_price=stop_price, # required only when isTrailingStopLoss is F
+        stop_price='8010.5', 
     )
 ```
 |Name                      |     Type        |     Description                           |Required                    |
@@ -141,10 +148,10 @@ order = cancel_order_format(order)
 cancel_response = delta_client.cancel_order(order)
 ```
 
-|Name            |     Type                      |     Description                      |Required                         |
-|----------------|-------------------------------|-------------------------------|-----------------------------|
-|order        |`object`                      |     order object             |true
-
+|Name                      |     Type        |     Description                           |Required                    |
+|--------------------------|-----------------|-------------------------------------------|----------------------------|
+|product_id                |`int`            |     id of product                         |true                        |
+|order_id                      |`int`            |     order size                            |true                        |
 
 > **Batch Create Orders**
 
@@ -206,9 +213,9 @@ response = delta_client.close_position(product_id)
 |product_id        |`integer`                    |     id of product             |true
 
 
-> **Add/Remove Position Margin**
+> **Change Leverage Positions**
 
-Add/Remove margin to/from open position.
+Change leverage for open position by adding or removing margin to an open position.
 Authorization required. [See sample response](https://docs.delta.exchange/#add-remove-position-margin)
 
 ```
