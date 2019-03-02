@@ -231,12 +231,20 @@ class DeltaRestClient:
         response = self.create_order(order)
         return response
 
-    def trade_history(self):
+    def order_history(self):
         query = {
             'page_num' : 1,
             'page_size' : 100
         }
         response = self._request("GET","orders/history",query=query, auth=True)
+        return response
+
+    def fills(self):
+        query = {
+            'page_num' : 1,
+            'page_size' : 100
+        }
+        response = self._request("GET","fills",query=query, auth=True)
         return response
 
 
