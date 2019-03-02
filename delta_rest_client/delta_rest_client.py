@@ -32,7 +32,7 @@ class DeltaRestClient:
         self.api_secret = api_secret
 
     # Check if payload and query are working
-    def request(self, method, path, payload=None, query=None, auth=False):
+    def _request(self, method, path, payload=None, query=None, auth=False):
         url = '%s/%s' % (self.base_url, path)
         if auth:
             if self.api_key is None or self.api_secret is None:
@@ -59,14 +59,14 @@ class DeltaRestClient:
         return res
 
     def get_product(self, product_id):
-        response = self.request("GET", "products")
+        response = self._request("GET", "products")
         response = response.json()
         products = list(
             filter(lambda x: x['id'] == product_id, response))
         return products[0] if len(products) > 0 else None
 
     def batch_create(self, product_id, orders):
-        response = self.request(
+        response = self._request(
             "POST",
             "orders/batch",
             {'product_id': product_id, 'orders': orders},
@@ -74,11 +74,11 @@ class DeltaRestClient:
         return response
 
     def create_order(self, order):
-        response = self.request('POST', "orders", order, auth=True)
+        response = self._request('POST', "orders", order, auth=True)
         return response.json()
 
     def batch_cancel(self, product_id, orders):
-        response = self.request(
+        response = self._request(
             "DELETE",
             "orders/batch",
             {'product_id': product_id, 'orders': orders},
@@ -86,7 +86,7 @@ class DeltaRestClient:
         return response.json()
 
     def batch_edit(self, product_id, orders):
-        response = self.request(
+        response = self._request(
             "PUT",
             "orders/batch",
             {'product_id': product_id, 'orders': orders},
@@ -95,7 +95,7 @@ class DeltaRestClient:
         return response.json()
 
     def get_orders(self, query=None):
-        response = self.request(
+        response = self._request(
             "GET",
             "orders",
             query=query,
@@ -103,7 +103,7 @@ class DeltaRestClient:
         return response.json()
 
     def get_L2_orders(self, product_id):
-        response = self.request("GET", "orderbook/%s/l2" % product_id)
+        response = self._request("GET", "orderbook/%s/l2" % product_id)
         return response.json()
 
     def get_ticker(self, product_id):
@@ -115,7 +115,7 @@ class DeltaRestClient:
         return (best_buy_price, best_sell_price)
 
     def get_wallet(self, asset_id):
-        response = self.request("GET", "wallet/balance",
+        response = self._request("GET", "wallet/balance",
                                 query={'asset_id': asset_id}, auth=True)
         return response.json()
 
@@ -132,11 +132,11 @@ class DeltaRestClient:
             'resolution': resolution
         }
 
-        response = self.request("GET", "chart/history", query=query)
+        response = self._request("GET", "chart/history", query=query)
         return response.json()
 
     def get_mark_price(self, product_id):
-        response = self.request(
+        response = self._request(
             "GET",
             "orderbook/%s/l2" % product_id)
         response = response.json()
@@ -146,7 +146,7 @@ class DeltaRestClient:
         raise Exception('Method not implemented')
 
     def get_position(self, product_id):
-        response = self.request(
+        response = self._request(
             "GET",
             "positions",
             auth=True)
@@ -159,7 +159,7 @@ class DeltaRestClient:
             return None
 
     def set_leverage(self, product_id, leverage):
-        response = self.request(
+        response = self._request(
             "POST",
             "orders/leverage",
             {
@@ -170,7 +170,7 @@ class DeltaRestClient:
         return response.json()
 
     def change_position_margin(self, product_id, delta_margin):
-        response = self.request(
+        response = self._request(
             'POST',
             'positions/change_margin',
             {
@@ -185,7 +185,7 @@ class DeltaRestClient:
             'id': order_id,
             'product_id': product_id
         }
-        response = self.request('DELETE', "orders", order, auth=True).json()
+        response = self._request('DELETE', "orders", order, auth=True).json()
         return response
 
     def place_stop_order(self, product_id, size, side, stop_price=None, limit_price=None, trail_amount=None, order_type=OrderType.LIMIT, isTrailingStopLoss=False):
@@ -229,6 +229,14 @@ class DeltaRestClient:
             order['time_in_force'] = time_in_force.value
 
         response = self.create_order(order)
+        return response
+
+    def trade_history(self):
+        query = {
+            'page_num' : 1,
+            'page_size' : 100
+        }
+        response = self._request("GET","orders/history",query=query, auth=True)
         return response
 
 
