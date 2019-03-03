@@ -1,11 +1,14 @@
-import requests
+"""
+Delta.exchange rest cilent
+https://docs.delta.exchange
+"""
 import time
 import datetime
 import hashlib
 import hmac
-import base64
 import json
 from enum import Enum
+import requests
 
 from decimal import Decimal
 from .version import __version__ as version
@@ -145,18 +148,23 @@ class DeltaRestClient:
     def get_leverage(self):
         raise Exception('Method not implemented')
 
-    def get_position(self, product_id):
+    def get_positions(self):
+        """ get all positions """
         response = self._request(
             "GET",
             "positions",
             auth=True)
-        response = response.json()
         if response:
-            current_position = list(
-                filter(lambda x: x['product']['id'] == product_id, response))
-            return current_position[0] if len(current_position) > 0 else None
+            response = response.json()            
+            return response
         else:
-            return None
+            return []
+
+    def get_position(self, product_id):
+        """ get position by product_id """
+        position = self.get_positions()
+        current_position = list(filter(lambda x: x['product']['id'] == product_id, response))
+        return current_position[0] if len(current_position) > 0 else []
 
     def set_leverage(self, product_id, leverage):
         response = self._request(
