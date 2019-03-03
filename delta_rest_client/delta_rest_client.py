@@ -267,6 +267,14 @@ def create_order_format(price, size, side, product_id, post_only='false'):
     }
     return order
 
+def create_order_format_post(price, size, side, product_id):
+    return create_order_format(price, size, side, product_id, post_only='true')
+
+def create_order_format_post_buy(price, size, product_id):
+    return create_order_format_post(price, size, "buy", product_id)
+    
+def create_order_format_post_sell(price, size, product_id):
+    return create_order_format_post(price, size, "sell", product_id)
 
 def cancel_order_format(x):
     order = {
