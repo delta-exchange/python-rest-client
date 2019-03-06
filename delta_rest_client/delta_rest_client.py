@@ -231,13 +231,45 @@ class DeltaRestClient:
         response = self.create_order(order)
         return response
 
+    def get_assets(self):
+        response = self.request('GET', 'assets')
+        return response.json()
+
+    def get_all_products(self):
+        response = self.request('GET', 'products')
+        return response.json()
+
+    def order_history(self, page_num=1, page_size=100):
+        response = self.request(
+            'GET',
+            'orders/history',
+            {
+                'page_num': page_num,
+                'page_size': page_size
+            },
+            auth=True
+        )
+        return response.json()
+
+    def fills(self, page_num=1, page_size=100):
+        response = self.request(
+            'GET',
+            'fills',
+            {
+                'page_num': page_num,
+                'page_size': page_size
+            },
+            auth=True
+        )
+        return response.json()
+
 
 def create_order_format(price, size, side, product_id, post_only='false'):
     order = {
         'product_id': product_id,
         'limit_price': str(price),
         'size': int(size),
-        'side': side,
+        'side': side.value,
         'order_type': 'limit_order',
         'post_only': post_only
     }
