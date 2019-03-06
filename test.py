@@ -14,8 +14,8 @@ order2 = create_order_format(
 
 delta_client.create_order(order1)  # will create order on testnet
 delta_client.get_product(product_id)
-delta_client.batch_create(product_id, [order1, order2])
-delta_client.batch_cancel(product_id, [order1, order2])
+# delta_client.batch_create(product_id, [order1, order2])
+# delta_client.batch_cancel(product_id, [order1, order2])
 delta_client.get_orders(query={'product_id': product_id})
 delta_client.get_L2_orders(product_id)
 delta_client.get_ticker(product_id)
@@ -24,10 +24,9 @@ delta_client.get_wallet(2)
 delta_client.get_mark_price(product_id)
 delta_client.get_position(product_id)
 delta_client.set_leverage(product_id, 2)
-
-order_limit_gtc = delta_client.place_order(
-    product_id, 10, 'buy', limit_price=3800, time_in_force=TimeInForce.FOK)
 try:
+    order_limit_gtc = delta_client.place_order(
+        product_id, 10, 'buy', limit_price=3800, time_in_force=TimeInForce.FOK)
     stop_order = delta_client.place_stop_order(
         product_id, order_type=OrderType.MARKET, size=10, side='sell')
 
@@ -41,3 +40,7 @@ try:
     )
 except requests.exceptions.HTTPError as e:
     print(e.response.text)
+delta_client.order_history()
+delta_client.fills()
+delta_client.get_assets()
+delta_client.get_all_products()

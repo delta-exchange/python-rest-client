@@ -30,6 +30,23 @@ testnet -  https://testnet-api.delta.exchange/products
 
 ## Methods
 
+> **Get All Products**
+
+Get list of current live contracts.
+
+```
+response = delta_client.get_all_products() 
+```
+
+> **Get Assets**
+
+Get list of assets supported on Delta.
+
+```
+response = delta_client.get_assets() 
+```
+
+
 >**Get Product Detail**
 
 Get product detail of current product.
@@ -246,4 +263,28 @@ response = delta_client.get_mark_price(product_id)
 |Name            |     Type                      |     Description               |Required                         |
 |----------------|-------------------------------|-------------------------------|--------------------
 |product_id      |`integer`                      |     id of product             |true
+
+
+> **Order History**
+
+```
+response = delta_client.order_history(page_num=1, page_size=100) 
+```
+|Name            |     Type                      |     Description               |Required                         |
+|----------------|-------------------------------|-------------------------------|--------------------
+|page_num        |`integer`                      |    page number                |false                            |
+|page_size       |`integer`                      |    page size                  |false                            |
+
+
+> **Fills**
+
+Get fill history of your orders
+
+```
+response = delta_client.fills(page_num=1, page_size=100) 
+```
+|Name            |     Type                      |     Description               |Required                         |
+|----------------|-------------------------------|-------------------------------|--------------------
+|page_num        |`integer`                      |    page number                |false                            |
+|page_size       |`integer`                      |    page size                  |false                            |
 
