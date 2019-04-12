@@ -7,6 +7,7 @@ delta_client = DeltaRestClient(
 )
 
 product_id = 11
+ticker_data = delta_client.get_ticker("BTCUSD")
 order1 = create_order_format(
     product_id=product_id, size=10, side="sell", price=3790.5)
 order2 = create_order_format(
