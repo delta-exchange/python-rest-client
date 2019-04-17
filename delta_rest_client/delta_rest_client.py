@@ -102,12 +102,13 @@ class DeltaRestClient:
             auth=True)
         return response.json()
 
-    def get_L2_orders(self, product_id):
-        response = self.request("GET", "orderbook/%s/l2" % product_id)
+    def get_L2_orders(self, product_id, auth=False):
+        response = self.request("GET", "orderbook/%s/l2" %
+                                product_id, auth=auth)
         return response.json()
 
-    def get_ticker(self, product_id):
-        l2_orderbook = self.get_L2_orders(product_id)
+    def get_ticker(self, product_id, auth=False):
+        l2_orderbook = self.get_L2_orders(product_id, auth=auth)
         best_sell_price = Decimal(l2_orderbook['sell_book'][0]['price']) if len(
             l2_orderbook['sell_book']) > 0 else Decimal('inf')
         best_buy_price = Decimal(l2_orderbook['buy_book'][0]['price']) if len(
@@ -135,11 +136,8 @@ class DeltaRestClient:
         response = self.request("GET", "chart/history", query=query)
         return response.json()
 
-    def get_mark_price(self, product_id):
-        response = self.request(
-            "GET",
-            "orderbook/%s/l2" % product_id)
-        response = response.json()
+    def get_mark_price(self, product_id, auth=False):
+        response = self.get_L2_orders(product_id, auth=auth)
         return float(response['mark_price'])
 
     def get_leverage(self):
