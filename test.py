@@ -6,18 +6,18 @@ delta_client = DeltaRestClient(
     api_secret=''
 )
 
-product_id = 11
+product_id = 24
 order1 = create_order_format(
     product_id=product_id, size=10, side="sell", price=3790.5)
 order2 = create_order_format(
     product_id=product_id, size=10, side="sell", price=3778)
 
-delta_client.create_order(order1)  # will create order on testnet
+# delta_client.create_order(order1)  # will create order on testnet
 delta_client.get_product(product_id)
 # delta_client.batch_create(product_id, [order1, order2])
 # delta_client.batch_cancel(product_id, [order1, order2])
 delta_client.get_orders(query={'product_id': product_id})
-delta_client.get_L2_orders(product_id)
+delta_client.get_L2_orders(product_id, auth=True)
 delta_client.get_ticker(product_id)
 delta_client.get_wallet(2)
 

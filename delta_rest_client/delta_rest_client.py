@@ -107,13 +107,10 @@ class DeltaRestClient:
                                 product_id, auth=auth)
         return response.json()
 
-    def get_ticker(self, product_id, auth=False):
-        l2_orderbook = self.get_L2_orders(product_id, auth=auth)
-        best_sell_price = Decimal(l2_orderbook['sell_book'][0]['price']) if len(
-            l2_orderbook['sell_book']) > 0 else Decimal('inf')
-        best_buy_price = Decimal(l2_orderbook['buy_book'][0]['price']) if len(
-            l2_orderbook['buy_book']) > 0 else 0
-        return (best_buy_price, best_sell_price)
+    def get_ticker(self, symbol):
+        response = self.request(
+            "GET", "/products/ticker/24hr", query={'symbol': symbol})
+        return response.json()
 
     def get_wallet(self, asset_id):
         response = self.request("GET", "wallet/balance",
