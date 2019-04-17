@@ -14,13 +14,13 @@ API Documentation - https://docs.delta.exchange
 3. Follow the below snippet to trade on testnet:
 
    ```
-   e
+   from delta_rest_client import DeltaRestClient
 
-    delta_client = DeltaRestClient(
-   ,
-   ,
-   '
-   )
+   delta_client = DeltaRestClient(
+    base_url='https://testnet-api.delta.exchange',
+    api_key='',
+    api_secret=''
+  )
    ```
 
 4. Get json list of available contracts to trade from given url and note down the product_id and asset_id, as it will be used in most of the api calls.
