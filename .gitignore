@@ -4,3 +4,4 @@ build
 dist
 *.egg-info
 delta_test.py
+.vscode
