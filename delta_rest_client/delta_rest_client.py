@@ -241,7 +241,7 @@ class DeltaRestClient:
         response = self.request(
             'GET',
             'orders/history',
-            {
+            query={
                 'page_num': page_num,
                 'page_size': page_size
             },
@@ -253,7 +253,7 @@ class DeltaRestClient:
         response = self.request(
             'GET',
             'fills',
-            {
+            query={
                 'page_num': page_num,
                 'page_size': page_size
             },
