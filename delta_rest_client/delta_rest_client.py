@@ -71,7 +71,7 @@ class DeltaRestClient:
             "orders/batch",
             {'product_id': product_id, 'orders': orders},
             auth=True)
-        return response
+        return response.json()
 
     def create_order(self, order):
         response = self.request('POST', "orders", order, auth=True)
