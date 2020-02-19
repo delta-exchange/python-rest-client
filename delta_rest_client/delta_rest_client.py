@@ -109,7 +109,7 @@ class DeltaRestClient:
 
     def get_ticker(self, symbol):
         response = self.request(
-            "GET", "/products/ticker/24hr", query={'symbol': symbol})
+            "GET", "products/ticker/24hr", query={'symbol': symbol})
         return response.json()
 
     def get_wallet(self, asset_id):
