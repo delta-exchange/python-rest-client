@@ -191,7 +191,7 @@ class DeltaRestClient:
             'order_type': order_type.value,
             'stop_order_type': 'stop_loss_order',
         }
-        if order_type.value == 'limit':
+        if order_type.value == 'limit_order':
             if limit_price is None:
                 raise Exception('limit_price is nil')
 
