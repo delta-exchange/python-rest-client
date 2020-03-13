@@ -144,12 +144,13 @@ class DeltaRestClient:
         response = self.request(
             "GET",
             "positions",
+            query={
+                'product_id': product_id
+            },
             auth=True)
         response = response.json()
         if response:
-            current_position = list(
-                filter(lambda x: x['product']['id'] == product_id, response))
-            return current_position[0] if len(current_position) > 0 else None
+            return response[0] if len(response) > 0 else None
         else:
             return None
 
