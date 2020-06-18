@@ -4,6 +4,8 @@ Delta Exchange is a crypto derivatives exchange where you can trade bitcoin, eth
 User Guide - https://www.delta.exchange/user-guide
 API Documentation - https://docs.delta.exchange
 
+Please read the [Changelog](https://github.com/delta-exchange/python-rest-client/blob/master/changelog.md) before using this package.
+
 # Get started
 
 1. Create an account on https://testnet.delta.exchange/signup
@@ -12,31 +14,19 @@ API Documentation - https://docs.delta.exchange
    pip install delta-rest-client
    ```
 3. Follow the below snippet to trade on testnet:
-
-   ```
-   from delta_rest_client import DeltaRestClient
-
-   delta_client = DeltaRestClient(
+  ```
+  from delta_rest_client import DeltaRestClient
+  delta_client = DeltaRestClient(
     base_url='https://testnet-api.delta.exchange',
     api_key='',
     api_secret=''
   )
-   ```
-
+  ```
 4. Get json list of available contracts to trade from given url and note down the product_id and asset_id, as it will be used in most of the api calls.
-
 production - https://api.delta.exchange/products
 testnet - https://testnet-api.delta.exchange/products
 
 ## Methods
-
-> **Get All Products**
-
-Get list of current live contracts.
-
-```
-response = delta_client.get_all_products()
-```
 
 > **Get Assets**
 
@@ -78,7 +68,7 @@ Get level-2 orderbook of the product.
 [See sample response](https://docs.delta.exchange/#delta-exchange-api-orderbook)
 
 ```
-response = delta_client.get_L2_orders(product_id)
+response = delta_client.get_l2_orderbook(product_id)
 ```
 
 | Name       | Type      | Description   | Required |
@@ -91,7 +81,7 @@ Get open orders.
 Authorization required. [See sample response](https://docs.delta.exchange/#get-orders)
 
 ```
-orders = delta_client.get_orders()
+orders = delta_client.get_live_orders()
 ```
 
 > **Place Order**
@@ -240,53 +230,32 @@ response = delta_client.change_position_margin(product_id, margin)
 | product_id | `integer` | id of product | true     |
 | margin     | `string`  | new margin    | true     |
 
-> **Get Wallet**
+> **Get Wallet Balances**
 
 Get user's balance.
 Authorization required. [See sample response](https://docs.delta.exchange/#get-wallet-balances)
 
 ```
-response = delta_client.get_wallet(asset_id)
+response = delta_client.get_balances(asset_id)
 ```
 
 | Name     | Type      | Description | Required |
 | -------- | --------- | ----------- | -------- |
 | asset_id | `integer` | id of asset | true     |
 
-> **Price History**
-
-Get price history.
-[See sample response](https://docs.delta.exchange/#delta-exchange-api-ohlc-candles)
-
-```
-response = delta_client.get_price_history(symbol, duration, resolution)
-```
-
-| Name       | Type      | Description   | Required |
-| ---------- | --------- | ------------- | -------- |
-| symbol     | `integer` | id of product | true     |
-| duration   | `string`  | default to 5  | false    |
-| resolution | `string`  | default to 1  | false    |
-
-> **Mark Price**
-
-```
-response = delta_client.get_mark_price(product_id)
-```
-
-| Name       | Type      | Description   | Required |
-| ---------- | --------- | ------------- | -------- |
-| product_id | `integer` | id of product | true     |
 
 > **Order History**
 
 ```
-response = delta_client.order_history(page_num=1, page_size=100)
+query = { "product_id": 27 }
+response = delta_client.order_history(query, page_size=100)
+old_orders = response['result']
+after_cursor_for_next_page = response["meta"]["after"]
+more_orders = delta_client.order_history(query, page_size=100, after=after_cursor_for_next_page)
 ```
 
 | Name      | Type      | Description | Required |
 | --------- | --------- | ----------- | -------- |
-| page_num  | `integer` | page number | false    |
 | page_size | `integer` | page size   | false    |
 
 > **Fills**
@@ -294,10 +263,14 @@ response = delta_client.order_history(page_num=1, page_size=100)
 Get fill history of your orders
 
 ```
-response = delta_client.fills(page_num=1, page_size=100)
+query = { "contract_types": "futures,interest_rate_swaps" }
+response = delta_client.fills(query, page_size=100)
+
+fills = response['result']
+after_cursor_for_next_page = response["meta"]["after"]
+more_fills = delta_client.fills(query, page_size=100, after=after_cursor_for_next_page)
 ```
 
 | Name      | Type      | Description | Required |
 | --------- | --------- | ----------- | -------- |
-| page_num  | `integer` | page number | false    |
 | page_size | `integer` | page size   | false    |
