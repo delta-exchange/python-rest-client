@@ -31,8 +31,8 @@ edit_orders = list(map(lambda o: {
 delta_client.batch_edit(product_id, edit_orders)
 
 
-# Get open orders
-orders = delta_client.get_open_orders(query={'product_id': product_id})
+# Get open limits order and pending stop orders
+orders = delta_client.get_live_orders(query={'product_ids': product_id, 'states': 'open,pending'})
 print(orders)
 
 # Batch delete
@@ -83,7 +83,7 @@ except requests.exceptions.HTTPError as e:
 
 
 #Order history & Fills
-query =  {"product_id": product_id}
+query =  {"product_ids": product_id}
 print("Getting first order history")
 history = delta_client.order_history(query, page_size=1)
 print(history)

@@ -12,7 +12,7 @@ From Version 1.0.0, we are using delta exchange v2 api. V2 apis are significantl
 
 ## Function Changes
 1. Certain functions were renamed
-    - get_orders -> get_open_orders
+    - get_orders -> get_live_orders
     - get_L2_orders -> get_l2_orderbook
     - get_wallet -> get_balances
 2. Certain functions were removed

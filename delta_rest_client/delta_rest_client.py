@@ -100,7 +100,7 @@ class DeltaRestClient:
     )
     return parseResponse(response)
 
-  def get_open_orders(self, query=None):
+  def get_live_orders(self, query=None):
     response = self.request(
       "GET",
       "/v2/orders",

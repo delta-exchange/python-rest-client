@@ -81,7 +81,7 @@ Get open orders.
 Authorization required. [See sample response](https://docs.delta.exchange/#get-orders)
 
 ```
-orders = delta_client.get_open_orders()
+orders = delta_client.get_live_orders()
 ```
 
 > **Place Order**
