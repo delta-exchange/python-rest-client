@@ -113,13 +113,9 @@ class DeltaRestClient:
     response = self.request("GET", "/v2/l2orderbook/%s" % identifier, auth=auth)
     return parseResponse(response)
 
-  def get_ticker(self, symbol):
-    response = self.request("GET", "/v2/tickers")# query={'symbol': symbol})
-    tickers = parseResponse(response)
-    tickers = list(
-      filter(lambda t: t['symbol'] == symbol, tickers)
-    )
-    return tickers[0] if len(tickers) > 0 else None
+  def get_ticker(self, identifier):
+    response = self.request("GET", "/v2/tickers/%s" % (identifier))
+    return parseResponse(response)
 
   def get_balances(self, asset_id):
     response = self.request("GET", "/v2/wallet/balances", auth=True) #query={'asset_id': asset_id}, auth=True)

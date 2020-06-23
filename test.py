@@ -1,7 +1,7 @@
 from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size, OrderType, TimeInForce
 import requests
 delta_client = DeltaRestClient(
-    base_url='https://devnet-api.delta.exchange',
+    base_url='https://testnet-api.delta.exchange',
     api_key='',
     api_secret='',
     raise_for_status=False
@@ -13,6 +13,11 @@ assets = delta_client.get_assets()
 print(assets)
 print(product)
 
+# Orderbook and ticker
+orderbook = delta_client.get_l2_orderbook(product_id, auth=True)
+print(orderbook)
+ticker = delta_client.get_ticker(product['symbol'])
+print(ticker)
 
 # Create Order
 order1 = create_order_format(product_id=product_id, size=10, side="sell", price=9000)
@@ -51,12 +56,6 @@ position = delta_client.get_position(product_id)
 margined_position = delta_client.get_margined_position(product_id)
 print(position)
 print(margined_position)
-
-# Orderbook and ticker
-orderbook = delta_client.get_l2_orderbook(product_id, auth=True)
-print(orderbook)
-ticker = delta_client.get_ticker(product['symbol'])
-print(ticker)
 
 
 # Set leverage
