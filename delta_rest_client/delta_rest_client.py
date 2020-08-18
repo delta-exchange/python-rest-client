@@ -61,8 +61,13 @@ class DeltaRestClient:
       res.raise_for_status()
     return res
 
-  def get_product(self, product_id):
-    response = self.request("GET", "/v2/products")
+
+  def get_assets(self, auth=True):
+    response = self.request('GET', '/v2/assets', auth=auth)
+    return parseResponse(response)
+
+  def get_product(self, product_id, auth=True):
+    response = self.request("GET", "/v2/products", auth=auth)
     products = parseResponse(response)
     products = list(
       filter(lambda p: p['id'] == product_id, products)
@@ -109,12 +114,12 @@ class DeltaRestClient:
     )
     return parseResponse(response)
 
-  def get_l2_orderbook(self, identifier, auth=False):
+  def get_l2_orderbook(self, identifier, auth=True):
     response = self.request("GET", "/v2/l2orderbook/%s" % identifier, auth=auth)
     return parseResponse(response)
 
-  def get_ticker(self, identifier):
-    response = self.request("GET", "/v2/tickers/%s" % (identifier))
+  def get_ticker(self, identifier, auth=True):
+    response = self.request("GET", "/v2/tickers/%s" % (identifier), auth=auth)
     return parseResponse(response)
 
   def get_balances(self, asset_id):
@@ -219,10 +224,6 @@ class DeltaRestClient:
       order['client_order_id'] = client_order_id
 
     return self.create_order(order)
-
-  def get_assets(self):
-    response = self.request('GET', '/v2/assets')
-    return parseResponse(response)
 
   def order_history(self, query={}, page_size=100, after=None):
     if after is not None:
