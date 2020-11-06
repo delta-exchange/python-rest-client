@@ -67,12 +67,9 @@ class DeltaRestClient:
     return parseResponse(response)
 
   def get_product(self, product_id, auth=True):
-    response = self.request("GET", "/v2/products", auth=auth)
-    products = parseResponse(response)
-    products = list(
-      filter(lambda p: p['id'] == product_id, products)
-    )
-    return products[0] if len(products) > 0 else None
+    response = self.request("GET", "/v2/products/%s" % (product_id), auth=auth)
+    product = parseResponse(response)
+    return product
 
   def batch_create(self, product_id, orders):
     response = self.request(
