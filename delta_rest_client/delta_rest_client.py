@@ -177,7 +177,7 @@ class DeltaRestClient:
       'id': order_id,
       'product_id': product_id
     }
-    response = self.request('DELETE', "/v2/orders", order, auth=True).json()
+    response = self.request('DELETE', "/v2/orders", order, auth=True)
     return parseResponse(response)
 
   def place_stop_order(self, product_id, size, side, stop_price=None, limit_price=None, trail_amount=None, order_type=OrderType.LIMIT, isTrailingStopLoss=False):
