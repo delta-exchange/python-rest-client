@@ -36,6 +36,8 @@ class DeltaRestClient:
   # Check if payload and query are working
   def request(self, method, path, payload=None, query=None, auth=False):
     url = '%s%s' % (self.base_url, path)
+    user_agent = 'delta-rest-client-v%s' % (version)
+    
     if auth:
       if self.api_key is None or self.api_secret is None:
         raise Exception('Api_key or Api_secret missing')
@@ -47,11 +49,11 @@ class DeltaRestClient:
         'api-key': self.api_key,
         'timestamp': timestamp,
         'signature': signature,
-        'User-Agent': 'rest-client',
+        'User-Agent': user_agent,
         'Content-Type': 'application/json'
       }
     else:
-      req_headers = {'User-Agent': 'rest-client'}
+      req_headers = {'User-Agent': user_agent}
 
     res = requests.request(
       method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=req_headers
@@ -130,7 +132,7 @@ class DeltaRestClient:
   def get_position(self, product_id):
     response = self.request(
       "GET",
-      "/v2/latest_positions",
+      "/v2/positions",
       query={
         'product_id': product_id
       },
@@ -141,13 +143,17 @@ class DeltaRestClient:
   def get_margined_position(self, product_id):
     response = self.request(
       "GET",
-      "/v2/positions",
+      "/v2/positions/margined",
       query={
-        'product_id': product_id
+        'product_ids': product_id
       },
       auth=True
     )
-    return parseResponse(response)
+    positions = parseResponse(response)
+    if len(positions) == 0:
+      return None
+    else:
+      return positions[0]
 
   def set_leverage(self, product_id, leverage):
     response = self.request(
