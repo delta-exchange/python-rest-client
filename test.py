@@ -4,8 +4,8 @@ import time
 
 delta_client = DeltaRestClient(
     base_url='https://testnet-api.delta.exchange',
-    api_key='da466509587c5c5dd3c3e141184abb',
-    api_secret='b891e1e9e74aaacc50cfbe86750a98b545170ad539f599881ca74be0f221',
+    api_key='',
+    api_secret='',
     raise_for_status=False
 )
 
