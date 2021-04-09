@@ -316,8 +316,10 @@ def query_string(query):
   if query == None:
     return ''
   else:
-    query_string = urllib.parse.urlencode(query)
-    return '?' + query_string
+    query_strings = []
+    for key, value in query.items():
+      query_strings.append(key + '=' + urllib.parse.quote_plus(str(value)))
+    return '?' + '&'.join(query_strings)
 
 
 def body_string(body):
