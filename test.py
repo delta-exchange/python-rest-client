@@ -1,5 +1,7 @@
 from delta_rest_client import DeltaRestClient, create_order_format, cancel_order_format, round_by_tick_size, OrderType, TimeInForce
 import requests
+import time
+
 delta_client = DeltaRestClient(
     base_url='https://testnet-api.delta.exchange',
     api_key='',
@@ -7,17 +9,18 @@ delta_client = DeltaRestClient(
     raise_for_status=False
 )
 
-product_id = 13
+starttime = time.time()
+product_id = 84
 product = delta_client.get_product(product_id)
 assets = delta_client.get_assets()
-print(assets)
-print(product)
+print("Assets: ", str(assets))
+print("Product: ", str(product))
 
 # Orderbook and ticker
 orderbook = delta_client.get_l2_orderbook(product_id, auth=True)
-print(orderbook)
+print("Orderbook: ", str(orderbook))
 ticker = delta_client.get_ticker(product['symbol'])
-print(ticker)
+print("Ticker: ", str(ticker))
 
 # Create Order
 order1 = create_order_format(product_id=product_id, size=10, side="sell", price=9000)
@@ -25,6 +28,7 @@ order2 = create_order_format(product_id=product_id, size=10, side="sell", price=
 delta_client.create_order(order1)  # will create order on testnet
 delta_client.create_order(order2)
 orders = delta_client.batch_create(product_id, [order1, order2])
+print("Batch orders created")
 
 # Batch edit
 edit_orders = list(map(lambda o: {
@@ -34,11 +38,12 @@ edit_orders = list(map(lambda o: {
     'product_id': product_id
 }, orders))
 delta_client.batch_edit(product_id, edit_orders)
+print("Batch orders edited")
 
 
 # Get open limits order and pending stop orders
 orders = delta_client.get_live_orders(query={'product_ids': product_id, 'states': 'open,pending'})
-print(orders)
+print("Live orders: " , str(orders))
 
 # Batch delete
 delete_orders = list(map(lambda o: {
@@ -46,16 +51,17 @@ delete_orders = list(map(lambda o: {
     'product_id': product_id
 }, orders))
 delta_client.batch_cancel(product_id, delete_orders)
+print("Batch orders cancelled")
 
 # Get balances
 wallet = delta_client.get_balances(product['settling_asset']['id'])
-print(wallet)
+print("Wallet: ", str(wallet))
 
 # Get position
 position = delta_client.get_position(product_id)
 margined_position = delta_client.get_margined_position(product_id)
-print(position)
-print(margined_position)
+print("Position: " + str(position))
+print("Margined Position: " + str(margined_position))
 
 
 # Set leverage
@@ -78,7 +84,7 @@ try:
         isTrailingStopLoss=True
     )
 except requests.exceptions.HTTPError as e:
-    print(e.response.code)
+    print("-----ERROR----: " + str(e.response.code))
 
 
 #Order history & Fills
@@ -92,5 +98,7 @@ if history["meta"]["after"] is not None:
     print(history)
 
 fills =  delta_client.fills(query, page_size=1)
-print(fills)
+print("Fills: " + str(fills))
+print("Testing finished in " + str(time.time() - starttime) + " secs")
+
 

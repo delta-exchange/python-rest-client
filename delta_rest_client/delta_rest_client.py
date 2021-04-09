@@ -11,8 +11,6 @@ from enum import Enum
 from decimal import Decimal
 from .version import __version__ as version
 
-agent = requests.Session()
-
 
 class OrderType(Enum):
   MARKET = 'market_order'
@@ -32,12 +30,17 @@ class DeltaRestClient:
     self.api_key = api_key
     self.api_secret = api_secret
     self.raise_for_status = raise_for_status
+    self.session = self._init_session()
+
+  def _init_session(self):
+    session = requests.Session()
+    user_agent = 'delta-rest-client-v%s' % version
+    session.headers.update({'User-Agent': user_agent})
+    return session
 
   # Check if payload and query are working
   def request(self, method, path, payload=None, query=None, auth=False):
     url = '%s%s' % (self.base_url, path)
-    user_agent = 'delta-rest-client-v%s' % (version)
-    
     if auth:
       if self.api_key is None or self.api_secret is None:
         raise Exception('Api_key or Api_secret missing')
@@ -49,13 +52,12 @@ class DeltaRestClient:
         'api-key': self.api_key,
         'timestamp': timestamp,
         'signature': signature,
-        'User-Agent': user_agent,
         'Content-Type': 'application/json'
       }
     else:
-      req_headers = {'User-Agent': user_agent}
+      req_headers = None
 
-    res = requests.request(
+    res = self.session.request(
       method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=req_headers
     )
 
