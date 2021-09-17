@@ -39,8 +39,11 @@ class DeltaRestClient:
     return session
 
   # Check if payload and query are working
-  def request(self, method, path, payload=None, query=None, auth=False):
-    url = '%s%s' % (self.base_url, path)
+  def request(self, method, path, payload=None, query=None, auth=False, base_url=None, headers={}):
+    if base_url == None:
+      base_url = self.base_url
+    url = '%s%s' % (base_url, path)
+
     if auth:
       if self.api_key is None or self.api_secret is None:
         raise Exception('Api_key or Api_secret missing')
@@ -48,17 +51,13 @@ class DeltaRestClient:
       signature_data = method + timestamp + path + \
         query_string(query) + body_string(payload)
       signature = generate_signature(self.api_secret, signature_data)
-      req_headers = {
-        'api-key': self.api_key,
-        'timestamp': timestamp,
-        'signature': signature,
-        'Content-Type': 'application/json'
-      }
-    else:
-      req_headers = None
+      headers['api-key'] = self.api_key
+      headers['timestamp']  = timestamp
+      headers['signature'] = signature
+      headers['Content-Type'] = 'application/json'
 
     res = self.session.request(
-      method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=req_headers
+      method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=headers
     )
 
     if self.raise_for_status:
