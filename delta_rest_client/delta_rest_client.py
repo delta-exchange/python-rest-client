@@ -44,6 +44,7 @@ class DeltaRestClient:
       base_url = self.base_url
     url = '%s%s' % (base_url, path)
 
+    headers['Content-Type'] = 'application/json'
     if auth:
       if self.api_key is None or self.api_secret is None:
         raise Exception('Api_key or Api_secret missing')
@@ -54,7 +55,6 @@ class DeltaRestClient:
       headers['api-key'] = self.api_key
       headers['timestamp']  = timestamp
       headers['signature'] = signature
-      headers['Content-Type'] = 'application/json'
 
     res = self.session.request(
       method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=headers
