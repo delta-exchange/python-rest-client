@@ -129,6 +129,55 @@ class DeltaRestClient:
       filter(lambda w: w['asset_id'] == asset_id, wallets)
     )
     return wallets[0] if len(wallets) > 0 else None
+  
+
+  def get_wallet_transactions(self, query=None):
+    """
+      https://docs.delta.exchange/#get-wallet-transactions
+
+      :param: asset_ids Optional
+      :type: integer
+      :param: start_time
+      :type: integer
+      :param: end_time
+      :type: integer
+      :param: after
+      :type: string
+      :param: before
+      :type: string
+      :param: page_size
+      :type: integer
+
+      :result: 
+          {
+          "success": true,
+          "result": [
+            {
+              "id": 0,
+              "amount": "string",
+              "balance": "string",
+              "transaction_type": "pnl",
+              "meta_data": {},
+              "product_id": 0,
+              "asset_id": 0,
+              "asset_symbol": 0,
+              "created_at": "string"
+            }
+          ],
+          "meta": {
+            "after": "string",
+            "before": "string"
+          }
+        }
+    """
+    response = self.request(
+      "GET",
+      "/v2/wallet/transactions",
+      query=query,
+      auth=True
+    )
+    return parseResponse(response)
+
 
   def get_position(self, product_id):
     response = self.request(
