@@ -4,8 +4,8 @@ import time
 
 delta_client = DeltaRestClient(
     base_url='https://testnet-api.delta.exchange',
-    api_key='',
-    api_secret='',
+    api_key='-',
+    api_secret='-',
     raise_for_status=False
 )
 
@@ -17,7 +17,7 @@ print("Assets: ", str(assets))
 print("Product: ", str(product))
 
 # Orderbook and ticker
-orderbook = delta_client.get_l2_orderbook(product_id, auth=True)
+orderbook = delta_client.get_l2_orderbook(product_id)
 print("Orderbook: ", str(orderbook))
 ticker = delta_client.get_ticker(product['symbol'])
 print("Ticker: ", str(ticker))
@@ -46,12 +46,12 @@ orders = delta_client.get_live_orders(query={'product_ids': product_id, 'states'
 print("Live orders: " , str(orders))
 
 # Batch delete
-delete_orders = list(map(lambda o: {
-    'id': o['id'],
-    'product_id': product_id
-}, orders))
-delta_client.batch_cancel(product_id, delete_orders)
-print("Batch orders cancelled")
+# delete_orders = list(map(lambda o: {
+#     'id': o['id'],
+#     'product_id': product_id
+# }, orders))
+# delta_client.batch_cancel(product_id, delete_orders)
+# print("Batch orders cancelled")
 
 # Get balances
 wallet = delta_client.get_balances(product['settling_asset']['id'])
@@ -101,4 +101,5 @@ fills =  delta_client.fills(query, page_size=1)
 print("Fills: " + str(fills))
 print("Testing finished in " + str(time.time() - starttime) + " secs")
 
-
+product = delta_client.get_product(product_id)
+print("Product: ", str(product))
