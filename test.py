@@ -99,6 +99,13 @@ if history["meta"]["after"] is not None:
 
 fills =  delta_client.fills(query, page_size=1)
 print("Fills: " + str(fills))
+
+
+# Wallet Transactions
+wallet_transactions = delta_client.get_wallet_transactions()
+print(wallet_transactions)
+
+
 print("Testing finished in " + str(time.time() - starttime) + " secs")
 
 product = delta_client.get_product(product_id)
