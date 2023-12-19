@@ -44,7 +44,7 @@ class DeltaRestClient:
       base_url = self.base_url
     url = '%s%s' % (base_url, path)
 
-    headers['Content-Type'] = 'application/json'
+    res = None
     if auth:
       if self.api_key is None or self.api_secret is None:
         raise Exception('Api_key or Api_secret missing')
@@ -52,24 +52,28 @@ class DeltaRestClient:
       signature_data = method + timestamp + path + \
         query_string(query) + body_string(payload)
       signature = generate_signature(self.api_secret, signature_data)
+      headers['Content-Type'] = 'application/json'
       headers['api-key'] = self.api_key
       headers['timestamp']  = timestamp
       headers['signature'] = signature
 
-    res = self.session.request(
-      method, url, data=body_string(payload), params=query, timeout=(3, 27), headers=headers
-    )
+      res = self.session.request(
+        method, url, data=body_string(payload), params=query, timeout=(3, 6), headers=headers
+      )
+    else:
+      non_auth_headers = {'User-Agent':'delta-rest-client-v%s'%version, 'Content-Type':'application/json'}
+      res = requests.request(method, url, data=body_string(payload), params=query, timeout=(3, 6), headers=non_auth_headers)
 
     if self.raise_for_status:
       res.raise_for_status()
     return res
 
 
-  def get_assets(self, auth=True):
+  def get_assets(self, auth=False):
     response = self.request('GET', '/v2/assets', auth=auth)
     return parseResponse(response)
 
-  def get_product(self, product_id, auth=True):
+  def get_product(self, product_id, auth=False):
     response = self.request("GET", "/v2/products/%s" % (product_id), auth=auth)
     product = parseResponse(response)
     return product
@@ -114,11 +118,11 @@ class DeltaRestClient:
     )
     return parseResponse(response)
 
-  def get_l2_orderbook(self, identifier, auth=True):
+  def get_l2_orderbook(self, identifier, auth=False):
     response = self.request("GET", "/v2/l2orderbook/%s" % identifier, auth=auth)
     return parseResponse(response)
 
-  def get_ticker(self, identifier, auth=True):
+  def get_ticker(self, identifier, auth=False):
     response = self.request("GET", "/v2/tickers/%s" % (identifier), auth=auth)
     return parseResponse(response)
 
