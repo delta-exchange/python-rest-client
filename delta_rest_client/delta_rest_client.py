@@ -34,8 +34,6 @@ class DeltaRestClient:
 
   def _init_session(self):
     session = requests.Session()
-    user_agent = 'delta-rest-client-v%s' % version
-    session.headers.update({'User-Agent': user_agent})
     return session
 
   # Check if payload and query are working
@@ -52,10 +50,8 @@ class DeltaRestClient:
       signature_data = method + timestamp + path + \
         query_string(query) + body_string(payload)
       signature = generate_signature(self.api_secret, signature_data)
-      headers['Content-Type'] = 'application/json'
-      headers['api-key'] = self.api_key
-      headers['timestamp']  = timestamp
-      headers['signature'] = signature
+      headers = {"Content-Type": "application/json", "api-key": self.api_key, "timestamp": timestamp,
+                 "signature": signature, "User-Agent": "delta-rest-client-v" + str(version)}
 
       res = self.session.request(
         method, url, data=body_string(payload), params=query, timeout=(3, 6), headers=headers
