@@ -61,7 +61,7 @@ class DeltaRestClient:
       res = requests.request(method, url, data=body_string(payload), params=query, timeout=(3, 6), headers=non_auth_headers)
 
     if self.raise_for_status:
-      res.raise_for_status()
+      raise_for_status(res)
     return res
 
 
@@ -326,3 +326,27 @@ def body_string(body):
     return ''
   else:
     return json.dumps(body, separators=(',', ':'))
+
+def raise_for_status(response):
+  """Raises :class:`HTTPError`, if one occurred."""
+
+  http_error_msg = ""
+  if isinstance(response.reason, bytes):
+    # We attempt to decode utf-8 first because some servers
+    # choose to localize their reason strings. If the string
+    # isn't utf-8, we fall back to iso-8859-1 for all other
+    # encodings. (See PR #3538)
+    try:
+        reason = response.reason.decode("utf-8")
+    except UnicodeDecodeError:
+        reason = response.reason.decode("iso-8859-1")
+  else:
+    reason = response.reason
+  if 400 <= response.status_code < 600:
+      reason = response.reason + " " + str(response.text)
+      http_error_msg = (
+          f"{response.status_code} HTTP Error: {reason} for url: {response.url}"
+      )
+
+  if http_error_msg:
+      raise requests.HTTPError(http_error_msg, response=response)
