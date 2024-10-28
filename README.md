@@ -8,7 +8,7 @@ Please read the [Changelog](https://github.com/delta-exchange/python-rest-client
 
 # Get started
 
-1. Create an account on Testnet-India: https://testnet.delta.exchange/ 
+1. Create an account on Testnet-India: https://testnet.delta.exchange/   
 For non-Indian customers use Testnet-Global: https://testnet-global.delta.exchange/
 2. Install the package:
    ```
