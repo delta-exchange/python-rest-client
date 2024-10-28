@@ -8,7 +8,8 @@ Please read the [Changelog](https://github.com/delta-exchange/python-rest-client
 
 # Get started
 
-1. Create an account on https://testnet.delta.exchange/signup
+1. Create an account on Testnet-India: https://testnet.delta.exchange/ 
+For non-Indian customers use Testnet-Global: https://testnet-global.delta.exchange/
 2. Install the package:
    ```
    pip install delta-rest-client
@@ -16,15 +17,30 @@ Please read the [Changelog](https://github.com/delta-exchange/python-rest-client
 3. Follow the below snippet to trade on testnet:
   ```
   from delta_rest_client import DeltaRestClient
+
   delta_client = DeltaRestClient(
-    base_url='https://testnet-api.delta.exchange',
+    base_url='https://cdn-ind.testnet.deltaex.org',
     api_key='',
     api_secret=''
   )
   ```
+
+  ```
+  base_url for different environments:
+  Production-India : https://api.india.delta.exchange
+  (Site at: https://india.delta.exchange/)
+
+  Testnet-India : https://cdn-ind.testnet.deltaex.org
+  (Site at: https://testnet.delta.exchange/)
+
+  Production-Global : https://api.delta.exchange
+  (Site at: https://www.delta.exchange/)
+
+  Testnet-Global : https://testnet-api.delta.exchange
+  (Site at: https://testnet-global.delta.exchange/)
+  ```
 4. Get json list of available contracts to trade from given url and note down the product_id and asset_id, as it will be used in most of the api calls.
-production - https://api.delta.exchange
-testnet - https://testnet-api.delta.exchange
+
 
 ## Methods
 

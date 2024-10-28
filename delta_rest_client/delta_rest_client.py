@@ -25,6 +25,18 @@ class TimeInForce(Enum):
 
 class DeltaRestClient:
 
+  """
+  base_url for different environments is:
+  Production-India : https://api.india.delta.exchange (For https://india.delta.exchange/)
+  Testnet-India : https://cdn-ind.testnet.deltaex.org (For https://testnet.delta.exchange/)
+
+  Production-Global : https://api.delta.exchange (For https://www.delta.exchange/)
+  Testnet-Global : https://testnet-api.delta.exchange (For https://testnet-global.delta.exchange/)
+
+  Each environment is fully independent.
+  So your api_key, api_secret would be different for each environment.
+  Also product_id, asset_id, user_id for each environment will be different.
+  """
   def __init__(self, base_url, api_key=None, api_secret=None, raise_for_status=True):
     self.base_url = base_url
     self.api_key = api_key
@@ -36,7 +48,6 @@ class DeltaRestClient:
     session = requests.Session()
     return session
 
-  # Check if payload and query are working
   def request(self, method, path, payload=None, query=None, auth=False, base_url=None, headers={}):
     if base_url == None:
       base_url = self.base_url
